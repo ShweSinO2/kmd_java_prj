@@ -48,6 +48,46 @@ public class ProjectController {
 		return result;
 	}
 
+	public int update(ProjectModel dain) {
+		int result = 0;
+		String sql = "update pj_management.project set project_name	=?,description=?,start_date=?,end_date=?,status_id=?,team_id=?,client_id=? where project_id=?";
+
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setString(1, dain.getProject_name());
+			ps.setString(2, dain.getDescription());
+			ps.setString(3, dain.getStart_date());
+			ps.setString(4, dain.getEnd_date());
+			ps.setInt(5, dain.getStatus_id());
+			ps.setInt(6, dain.getTeam_id());
+			ps.setInt(7, dain.getClient_id());
+			ps.setInt(8, dain.getProject_id());
+
+			System.out.println(ps);
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public int delete(ProjectModel dain) {
+		// TODO Auto-generated method stub
+		int result = 0;
+		String sql = "delete from pj_management.project where project_id=?";
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setInt(1, dain.getProject_id());
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Delete Fail,Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
+		}
+		return result;
+	}
+
 	public boolean isduplicate(ProjectModel dain) throws SQLException {
 		boolean duplicate = false;
 		String sql = "select * from pj_management.project where project_name = ?";
