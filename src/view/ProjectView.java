@@ -7,12 +7,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JDayChooser;
 
+import config.MySqlQueries;
 import controller.ProjectController;
 import model.ProjectModel;
 
@@ -21,7 +18,9 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -37,7 +36,13 @@ public class ProjectView extends JFrame {
 	private JTextField txtProjectName;
 	private JDateChooser startDate;
 	private JDateChooser endDate;
+	private JComboBox cboStatus;
+	private JComboBox cboTeam;
+	private JComboBox cboClient;
 	String Project_id = null;
+	Map<String, Integer> statusMap = new HashMap<>();
+	Map<String, Integer> teamMap = new HashMap<>();
+	Map<String, Integer> clientMap = new HashMap<>();
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -78,37 +83,46 @@ public class ProjectView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int row = tblProject.rowAtPoint(e.getPoint());
+		        int column = tblProject.columnAtPoint(e.getPoint());
 				ProjectModel pm = new ProjectModel();
 
 				//update row for project
-				System.out.println("------");
-				Project_id = (String)tblProject.getValueAt(row, 0);
-				pm.setProject_id(Integer.parseInt(Project_id));
-				System.out.println(Project_id);
-				txtProjectName.setText((String)tblProject.getValueAt(row, 1));
-				txtDescription.setText((String)tblProject.getValueAt(row, 2));
-			    
-			    try {
-			        String startDateStr = (String) tblProject.getValueAt(row, 3);
-			        String endDateStr = (String) tblProject.getValueAt(row, 4);
-			        
-			        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			        Date start = sdf.parse(startDateStr);
-			        Date end = sdf.parse(endDateStr);
-			        
-			        startDate.setDate(start); // JDateChooser method
-			        endDate.setDate(end);     // JDateChooser method
-			    } catch (ParseException e1) {
-			        e1.printStackTrace();
-			    }
+				if(column != 8) {
+					Project_id = (String)tblProject.getValueAt(row, 0);
+					pm.setProject_id(Integer.parseInt(Project_id));
+					txtProjectName.setText((String)tblProject.getValueAt(row, 1));
+					txtDescription.setText((String)tblProject.getValueAt(row, 2));
+				    
+				    try {
+				        String startDateStr = (String) tblProject.getValueAt(row, 3);
+				        String endDateStr = (String) tblProject.getValueAt(row, 4);
+				        
+				        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				        Date start = sdf.parse(startDateStr);
+				        Date end = sdf.parse(endDateStr);
+				        
+				        startDate.setDate(start);
+				        endDate.setDate(end);
+				    } catch (ParseException e1) {
+				        e1.printStackTrace();
+				    }
+				    
+				    String statusName = (String) tblProject.getValueAt(row, 5);
+					cboStatus.setSelectedItem(statusName);
+					
+					String teamName = (String) tblProject.getValueAt(row, 6);
+					cboTeam.setSelectedItem(teamName);
+					
+					String clientName = (String) tblProject.getValueAt(row, 7);
+					cboClient.setSelectedItem(clientName);
 
-				btnSave.setEnabled(false);
-				btnUpdate.setEnabled(true);
-				btnDelete.setEnabled(true);
-				txtProjectName.requestFocus();
+					btnSave.setEnabled(false);
+					btnUpdate.setEnabled(true);
+					btnDelete.setEnabled(true);
+					txtProjectName.requestFocus();
+				}
 				
 				//delete row for project
-		        int column = tblProject.columnAtPoint(e.getPoint());
 		        if (column == 8) {
 		        	DefaultTableModel model = (DefaultTableModel) tblProject.getModel();
 	                String projectIdStr = (String) model.getValueAt(row, 0);
@@ -177,8 +191,8 @@ public class ProjectView extends JFrame {
 		lblNewLabel.setBounds(10, 114, 46, 14);
 		formPanel.add(lblNewLabel);
 
-		JComboBox cboStatus = new JComboBox();
-		cboStatus.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5" }));
+		cboStatus = new JComboBox();
+		MySqlQueries.addCoboBox("status", "status_id", "status_name", cboStatus, statusMap);
 		cboStatus.setBounds(91, 110, 200, 30);
 		formPanel.add(cboStatus);
 
@@ -186,8 +200,8 @@ public class ProjectView extends JFrame {
 		lblTeam.setBounds(353, 114, 46, 14);
 		formPanel.add(lblTeam);
 
-		JComboBox cboTeam = new JComboBox();
-		cboTeam.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5" }));
+		cboTeam = new JComboBox();
+		MySqlQueries.addCoboBox("team", "team_id", "team_name", cboTeam, teamMap);
 		cboTeam.setBounds(434, 110, 200, 30);
 		formPanel.add(cboTeam);
 
@@ -195,8 +209,8 @@ public class ProjectView extends JFrame {
 		lblClient.setBounds(10, 161, 46, 14);
 		formPanel.add(lblClient);
 
-		JComboBox cboClient = new JComboBox();
-		cboClient.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5" }));
+		cboClient = new JComboBox();
+		MySqlQueries.addCoboBox("client", "client_id", "name", cboClient, clientMap);
 		cboClient.setBounds(91, 157, 200, 30);
 		formPanel.add(cboClient);
 
@@ -221,14 +235,17 @@ public class ProjectView extends JFrame {
 				String formattedEndDate = sdf.format(endDate.getDate());
 				pm.setEnd_date(formattedEndDate);
 
-				int statusId = Integer.parseInt(cboStatus.getSelectedItem().toString());
+				String selectedStatus = (String) cboStatus.getSelectedItem();
+				int statusId = statusMap.get(selectedStatus);
 				pm.setStatus_id(statusId);
+				
+				String selectedTeam = (String) cboTeam.getSelectedItem();
+				int teamId = teamMap.get(selectedTeam);
+				pm.setTeam_id(teamId);
 
-				int teamId = Integer.parseInt(cboTeam.getSelectedItem().toString());
-				pm.setTeam_id(statusId);
-
-				int clientId = Integer.parseInt(cboClient.getSelectedItem().toString());
-				pm.setClient_id(statusId);
+				String selectedClient = (String) cboClient.getSelectedItem();
+				int clientId = clientMap.get(selectedClient);
+				pm.setClient_id(clientId);
 
 				try {
 					if (pc.isduplicate(pm)) {
@@ -280,14 +297,26 @@ public class ProjectView extends JFrame {
 				String formattedEndDate = sdf.format(endDate.getDate());
 				pm.setEnd_date(formattedEndDate);
 
-				int statusId = Integer.parseInt(cboStatus.getSelectedItem().toString());
+//				int statusId = Integer.parseInt(cboStatus.getSelectedItem().toString());
+//				pm.setStatus_id(statusId);
+
+//				int teamId = Integer.parseInt(cboTeam.getSelectedItem().toString());
+//				pm.setTeam_id(statusId);
+//
+//				int clientId = Integer.parseInt(cboClient.getSelectedItem().toString());
+//				pm.setClient_id(statusId);
+				
+				String selectedStatus = (String) cboStatus.getSelectedItem();
+				int statusId = statusMap.get(selectedStatus);
 				pm.setStatus_id(statusId);
+				
+				String selectedTeam = (String) cboTeam.getSelectedItem();
+				int teamId = teamMap.get(selectedTeam);
+				pm.setTeam_id(teamId);
 
-				int teamId = Integer.parseInt(cboTeam.getSelectedItem().toString());
-				pm.setTeam_id(statusId);
-
-				int clientId = Integer.parseInt(cboClient.getSelectedItem().toString());
-				pm.setClient_id(statusId);
+				String selectedClient = (String) cboClient.getSelectedItem();
+				int clientId = clientMap.get(selectedClient);
+				pm.setClient_id(clientId);
 				
 				try {
 					if(pc.isduplicate(pm)) {
@@ -443,6 +472,9 @@ public class ProjectView extends JFrame {
 		txtDescription.setText("");
 		startDate.setDate(null);
 		endDate.setDate(null);
+		cboStatus.setSelectedIndex(0);
+		cboTeam.setSelectedIndex(0);
+		cboClient.setSelectedIndex(0);
 
 		txtProjectName.requestFocus(true);
 	}
@@ -459,9 +491,9 @@ public class ProjectView extends JFrame {
 				data[2] = pm.getDescription();
 				data[3] = pm.getStart_date();
 				data[4] = pm.getEnd_date();
-				data[5] = Integer.toString(pm.getStatus_id());
-				data[6] = Integer.toString(pm.getTeam_id());
-				data[7] = Integer.toString(pm.getClient_id());
+				data[5] = getNameById(statusMap, pm.getStatus_id());
+				data[6] = getNameById(teamMap, pm.getTeam_id());
+				data[7] = getNameById(clientMap, pm.getClient_id());
 				data[8] = "Delete";
 				dtm.addRow(data);
 			}
@@ -469,5 +501,15 @@ public class ProjectView extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	//get id from database and show name by Id
+	public static String getNameById(Map<String, Integer> map, int id) {
+	    for (Map.Entry<String, Integer> entry : map.entrySet()) {
+	        if (entry.getValue() == id) {
+	            return entry.getKey();
+	        }
+	    }
+	    return null;
 	}
 }
