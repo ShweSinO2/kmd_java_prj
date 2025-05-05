@@ -5,10 +5,12 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 import controller.EmployeeController;
 import model.EmployeeModel;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -54,14 +56,13 @@ public class LoginView extends JFrame{
 //		outerPanel.setLayout(null);
 		
 		JPanel innerPanel = new JPanel();
-//		innerPanel.setBounds(253, 115, 254, 281);
-//		outerPanel.add(innerPanel);
-//		innerPanel.setLayout(null);
-		int innerPanelWidth = 254;
+		innerPanel.setBackground(new Color(255, 255, 255, 180)); // semi-transparent white
+		innerPanel.setBorder(new LineBorder(new Color(255, 255, 255), 2, true)); 
+		int innerPanelWidth = 284;
 		int innerPanelHeight = 281;
-		int innerPanelX = (screenSize.width - innerPanelWidth) / 2; // Center horizontally
-		int innerPanelY = 115; // Keep your original Y value or adjust as needed
-		innerPanel.setBounds(innerPanelX, innerPanelY, innerPanelWidth, innerPanelHeight);
+		int innerPanelX = (screenSize.width - innerPanelWidth) / 2;
+		int innerPanelY = 115;
+		innerPanel.setBounds(541, 115, 294, 297);
 		outerPanel.add(innerPanel);
 		innerPanel.setLayout(null);
 		
@@ -70,24 +71,43 @@ public class LoginView extends JFrame{
 		innerPanel.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel = new JLabel("LOGIN");
-		lblNewLabel.setBounds(95, 23, 46, 14);
+		lblNewLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+		lblNewLabel.setBounds(121, 23, 48, 14);
 		innerPanel.add(lblNewLabel);
 		
 		txtUsername = new JTextField();
-		txtUsername.setBounds(26, 98, 212, 20);
-		innerPanel.add(txtUsername);
+		txtUsername.setBounds(26, 98, 242, 28);
+		txtUsername.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		txtUsername.setBorder(BorderFactory.createCompoundBorder(
+		    new LineBorder(new Color(200, 150, 100), 1, true),
+		    BorderFactory.createEmptyBorder(5, 10, 5, 10)
+		));
 		txtUsername.setColumns(10);
+		innerPanel.add(txtUsername);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Password");
 		lblNewLabel_1_1.setBounds(26, 139, 212, 14);
 		innerPanel.add(lblNewLabel_1_1);
 		
 		txtPassword = new JTextField();
+		txtPassword.setBounds(26, 164, 242, 28);
+		txtPassword.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		txtPassword.setBorder(BorderFactory.createCompoundBorder(
+		    new LineBorder(new Color(200, 150, 100), 1, true),
+		    BorderFactory.createEmptyBorder(5, 10, 5, 10)
+		));
+		innerPanel.add(txtPassword);
 		txtPassword.setColumns(10);
-		txtPassword.setBounds(26, 164, 212, 20);
 		innerPanel.add(txtPassword);
 		
 		JButton btnNewButton = new JButton("Login");
+		
+		btnNewButton.setBackground(new Color(153, 76, 0));
+		btnNewButton.setForeground(Color.WHITE);
+		btnNewButton.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnNewButton.setBorder(new LineBorder(new Color(102, 51, 0), 1, true));
+		btnNewButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(txtUsername.getText().trim().toString().equals("")) {
@@ -120,7 +140,7 @@ public class LoginView extends JFrame{
 						else
 						{
 							System.out.println("There is no data ---------");
-							JOptionPane.showMessageDialog(null, "Wrong username of password","Fail", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Wrong username or password","Fail", JOptionPane.ERROR_MESSAGE);
 							txtUsername.requestFocus(true);
 							txtUsername.selectAll();
 						}
@@ -131,13 +151,13 @@ public class LoginView extends JFrame{
 				}
 			}
 		});
-		btnNewButton.setBounds(26, 209, 212, 23);
+		btnNewButton.setBounds(26, 220, 242, 28);
 		innerPanel.add(btnNewButton);
 		
-		JLabel lblNewLabel_2 = new JLabel("Project Management System");
-		lblNewLabel_2.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		lblNewLabel_2.setBounds(283, 26, 205, 31);
-		outerPanel.add(lblNewLabel_2);
+//		JLabel lblNewLabel_2 = new JLabel("Project Management System");
+//		lblNewLabel_2.setFont(new Font("SansSerif", Font.PLAIN, 16));
+//		lblNewLabel_2.setBounds(283, 26, 205, 31);
+//		outerPanel.add(lblNewLabel_2);
 	}
 
 	public static void main(String[] args) {

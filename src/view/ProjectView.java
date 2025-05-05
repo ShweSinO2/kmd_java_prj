@@ -87,7 +87,7 @@ public class ProjectView extends JFrame {
 				ProjectModel pm = new ProjectModel();
 
 				//update row for project
-				if(column != 8) {
+//				if(column != 8) {
 					Project_id = (String)tblProject.getValueAt(row, 0);
 					pm.setProject_id(Integer.parseInt(Project_id));
 					txtProjectName.setText((String)tblProject.getValueAt(row, 1));
@@ -120,7 +120,7 @@ public class ProjectView extends JFrame {
 					btnUpdate.setEnabled(true);
 					btnDelete.setEnabled(true);
 					txtProjectName.requestFocus();
-				}
+//				}
 				
 				//delete row for project
 		        if (column == 8) {
