@@ -1,13 +1,15 @@
 package controller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import config.DBConfig;
+import controller.EmployeeController;
+//import model.CustomerModel;
 import model.EmployeeModel;
 
 public class EmployeeController {
@@ -19,12 +21,104 @@ public class EmployeeController {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null,"Insert Fail,Inter error","Fail", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Insert Fail,Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
 		}
+
+	}
+
+	public int insert(EmployeeModel dain) {
+		int result = 0;
+		String sql = "insert into pj_management.employee (employee_id,name,email,password,status,role_id) values(?,?,?,?,?,?)";
+
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setString(1,dain.getEmployee_id());
+			ps.setString(2, dain.getEmployee_name());
+			ps.setString(3, dain.getEmail());
+			ps.setString(4, dain.getPassword());
+			ps.setString(5,"Active");
+			ps.setInt(6,dain.getRole_id());
+			
+
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
 	
+	public int update(EmployeeModel dain) {
+		int result = 0;
+		String sql = "update pj_management.employee set name=?,email=?,password=?,status=?,role_id=? where employee_id=? ";
+		
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			
+			ps.setString(1, dain.getEmployee_name());
+			ps.setString(2, dain.getEmail());
+			ps.setString(3, dain.getPassword());
+			ps.setString(4,"Active");
+			ps.setInt(5,dain.getRole_id());
+			ps.setString(6,dain.getEmployee_id());
+			
+			
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public String getPswbyId (String id) throws SQLException
+	{	String psw = "";
+		String sql="select password from pj_management.employee where employee_id = ?";
+		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ps.setString(1,id);
+		ResultSet rs=ps.executeQuery();
+		 if (rs.next()) {
+	            psw = rs.getString("password");
+	        }
+
+		return psw;
 	}
 	
 
+	public boolean isduplicate(EmployeeModel dain) throws SQLException {
+		boolean duplicate = false;
+		String sql = "select * from pj_management.employee where name = ? and employee_id != ?";
+		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ps.setString(1, dain.getEmployee_name());
+		ps.setString(2, dain.getEmployee_id());
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			duplicate = true;
+		} else {
+			duplicate = false;
+		}
+		return duplicate;
+	}
+
+	public List<EmployeeModel> selectall() throws SQLException {
+		List<EmployeeModel> list = new ArrayList<EmployeeModel>();
+		String sql = "select * from pj_management.employee order by employee_id desc";
+		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			EmployeeModel pm = new EmployeeModel();
+			pm.setEmployee_id(rs.getString("employee_id"));
+			pm.setEmployee_name(rs.getString("name"));
+			pm.setEmail(rs.getString("email"));
+			pm.setPassword(rs.getString("password"));
+			pm.setStatus(rs.getString("status"));
+			pm.setRole_id(rs.getInt("role_id"));
+			
+			list.add(pm);
+		}
+		return list;
+	}
+	
 	public boolean loginState(EmployeeModel dain) throws SQLException{
 		boolean duplicate = false;
 		String sql = "select * from pj_management.employee where name=? and password=?";
@@ -39,4 +133,10 @@ public class EmployeeController {
 		}
 		return duplicate;
 	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

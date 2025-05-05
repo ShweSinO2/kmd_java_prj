@@ -39,6 +39,8 @@ public class SideMenuPanel extends JPanel {
 		add(Box.createRigidArea(new Dimension(0, 10)));
 		add(createMenuButton("Team", "TeamView"));
 		add(Box.createRigidArea(new Dimension(0, 10)));
+		add(createMenuButton("Client", "ClientView"));
+		add(Box.createRigidArea(new Dimension(0, 10)));
 		add(createMenuButton("Notification", "NotificationView"));
 		add(Box.createRigidArea(new Dimension(0, 10)));
 		add(createMenuButton("Logout", "LoginView"));
@@ -117,11 +119,14 @@ public class SideMenuPanel extends JPanel {
 	            case "AttachmentView":
 	                new AttachmentView().setVisible(true);
 	                break;
+	            case "ClientView":
+	                new ClientView().setVisible(true);
+	                break;
 	            case "EmployeeView":
-//	                new EmployeeView().setVisible(true);
+	                new EmployeeView().setVisible(true);
 	                break;
 	            case "TeamView":
-//	                new TeamView().setVisible(true);
+	                new TeamView().setVisible(true);
 	                break;
 	            case "NotificationView":
 //	                new NotificationView().setVisible(true);

@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import com.toedter.calendar.JDateChooser;
 
-import config.MySqlQueries;
+import config.MySqlQuery;
 import controller.ProjectController;
 import model.ProjectModel;
 
@@ -192,7 +192,7 @@ public class ProjectView extends JFrame {
 		formPanel.add(lblNewLabel);
 
 		cboStatus = new JComboBox();
-		MySqlQueries.addCoboBox("status", "status_id", "status_name", cboStatus, statusMap);
+		MySqlQuery.addCoboBox("status", "status_id", "status_name", cboStatus, statusMap);
 		cboStatus.setBounds(91, 110, 200, 30);
 		formPanel.add(cboStatus);
 
@@ -201,7 +201,7 @@ public class ProjectView extends JFrame {
 		formPanel.add(lblTeam);
 
 		cboTeam = new JComboBox();
-		MySqlQueries.addCoboBox("team", "team_id", "team_name", cboTeam, teamMap);
+		MySqlQuery.addCoboBox("team", "team_id", "team_name", cboTeam, teamMap);
 		cboTeam.setBounds(434, 110, 200, 30);
 		formPanel.add(cboTeam);
 
@@ -210,7 +210,7 @@ public class ProjectView extends JFrame {
 		formPanel.add(lblClient);
 
 		cboClient = new JComboBox();
-		MySqlQueries.addCoboBox("client", "client_id", "name", cboClient, clientMap);
+		MySqlQuery.addCoboBox("client", "client_id", "name", cboClient, clientMap);
 		cboClient.setBounds(91, 157, 200, 30);
 		formPanel.add(cboClient);
 
