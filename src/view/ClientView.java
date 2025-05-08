@@ -16,6 +16,7 @@ import com.toedter.calendar.JDayChooser;
 import config.Checking;
 
 import controller.ClientController;
+import controller.EmployeeController;
 import model.ClientModel;
 
 
@@ -40,6 +41,7 @@ public class ClientView extends JFrame {
 	private JTextField txtEmail;
 	private JTextField txtCompanyName;
 	private JTextField txtCompanyAddress;
+	private JTextField txtPhone;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -77,21 +79,52 @@ public class ClientView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				ClientController ec=new ClientController();
+				ClientModel pm=new ClientModel();
 				int r = tblClient.getSelectedRow();
+				int column = tblClient.columnAtPoint(e.getPoint());
 				String Client_id = (String)tblClient.getValueAt(r, 0);
 				System.out.println(Client_id);
 				
 				txtName.setText((String)tblClient.getValueAt(r, 1));
-				txtEmail.setText((String)tblClient.getValueAt(r, 2));
-				txtCompanyName.setText((String)tblClient.getValueAt(r, 3));
-				txtCompanyAddress.setText((String)tblClient.getValueAt(r, 4));
+				txtPhone.setText((String)tblClient.getValueAt(r,2));
+				txtEmail.setText((String)tblClient.getValueAt(r, 3));
+				txtCompanyName.setText((String)tblClient.getValueAt(r, 4));
+				txtCompanyAddress.setText((String)tblClient.getValueAt(r, 5));
 				btnSave.setEnabled(false);
 				btnUpdate.setEnabled(true);
 				btnDelete.setEnabled(true);
 				txtName.requestFocus();
 				txtName.selectAll();
+				
+				if (column == 6) {
+		        	DefaultTableModel model = (DefaultTableModel) tblClient.getModel();
+	                String clientId = (String) model.getValueAt(r, 0);
+	                pm.setClient_id(Integer.parseInt(clientId));
+
+	                try {	                	
+	                	if(JOptionPane.showConfirmDialog(null,"Are you sure you want to delete?","Confrim",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+	                		ClientController pc = new ClientController();
+							int rs = pc.delete(pm);
+							if(rs==1) {
+								
+								JOptionPane.showMessageDialog(null,"Delete Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
+//								AutoID();
+								showList();
+								clear();
+								
+							}else {
+								System.out.println(rs);
+								JOptionPane.showMessageDialog(null,"Delete fails");
+							}
+						}
+	                } catch (Exception ex) {
+	                    ex.printStackTrace();
+	                    JOptionPane.showMessageDialog(null, "Error while deleting: " + ex.getMessage());
+	                }
+		        }
 			}
 		});
+			
 		JScrollPane tableScrollPane = new JScrollPane(tblClient);
 		tableScrollPane.setBounds(23, 322, 661, 542);
 		rightPanel.setLayout(null);
@@ -132,6 +165,7 @@ public class ClientView extends JFrame {
 
 				
 				pm.setName(txtName.getText().toString());
+				pm.setPhone(txtPhone.getText().toString());
 				pm.setEmail(txtEmail.getText().toString());
 				pm.setCompany_name(txtCompanyName.getText().toString());
 				pm.setCompany_address(txtCompanyAddress.getText().toString());
@@ -160,11 +194,11 @@ public class ClientView extends JFrame {
 //					txtShowAll.requestFocus(true);
 //					txtShowAll.selectAll();
 					}
-//				else if(!Checking.isPhoneNo(pm.getPhone())) {
-//					JOptionPane.showMessageDialog(null, "Phone_number Format Error","Invlaid", JOptionPane.ERROR_MESSAGE);
+				else if(!Checking.isPhoneNo(pm.getPhone())) {
+					JOptionPane.showMessageDialog(null, "Phone_number Format Error","Invlaid", JOptionPane.ERROR_MESSAGE);
 ////					txtShowAll.requestFocus(true);
 ////					txtShowAll.selectAll();
-//				}
+				}
 				else {
 
 				
@@ -209,18 +243,14 @@ public class ClientView extends JFrame {
 //					txtShowAll.requestFocus(true);
 //					txtShowAll.selectAll();
 				}else {
-//
-//				try {
-//					pm.setClient_id(pc.getIDbyName(txtName.getText()));
-//				} catch (SQLException e2) {
-//					// TODO Auto-generated catch block
-//					e2.printStackTrace();
-//				}
-					int r = tblClient.getSelectedRow();
-					int Client_id = Integer.parseInt(tblClient.getValueAt(r, 0).toString());
+
+				
+				int r = tblClient.getSelectedRow();
+				int Client_id = Integer.parseInt(tblClient.getValueAt(r, 0).toString());
 
 				pm.setClient_id(Client_id);
 				pm.setName(txtName.getText().toString());
+				pm.setPhone(txtPhone.getText().toString());
 				pm.setEmail(txtEmail.getText().toString());
 				pm.setCompany_name(txtCompanyName.getText().toString());
 				pm.setCompany_address(txtCompanyAddress.getText().toString());
@@ -249,6 +279,11 @@ public class ClientView extends JFrame {
 						txtEmail.requestFocus(true);
 						txtEmail.selectAll();
 						}
+					else if(!Checking.isPhoneNo(pm.getPhone())) {
+						JOptionPane.showMessageDialog(null, "Phone_number Format Error","Invlaid", JOptionPane.ERROR_MESSAGE);
+//						txtShowAll.requestFocus(true);
+//						txtShowAll.selectAll();
+					}
 					
 					else {
 						try {
@@ -310,6 +345,15 @@ public class ClientView extends JFrame {
 		txtCompanyAddress.setBounds(117, 169, 200, 30);
 		formPanel.add(txtCompanyAddress);
 		
+		JLabel lblPhone = new JLabel("Phone");
+		lblPhone.setBounds(346, 21, 80, 30);
+		formPanel.add(lblPhone);
+		
+		txtPhone = new JTextField();
+		txtPhone.setColumns(10);
+		txtPhone.setBounds(397, 21, 200, 30);
+		formPanel.add(txtPhone);
+		
 		rightPanel.add(tableScrollPane);
 
 		// Add right panel to main frame
@@ -331,15 +375,19 @@ public class ClientView extends JFrame {
 	{
 	     dtm.addColumn("ID");
 	     dtm.addColumn("Name");
+	     dtm.addColumn("Phone");
 	     dtm.addColumn("Email");
 	     dtm.addColumn("Company Name");
 	     dtm.addColumn("Company Address");
+	     dtm.addColumn("Action");
 	     tblClient.setModel(dtm);
 	     setColumnWidth(0,60);
 	     setColumnWidth(1,60);
 	     setColumnWidth(2,150);
 	     setColumnWidth(3,100);
 	     setColumnWidth(4,100);
+	     setColumnWidth(5,100);
+	     
 
 	    
 	     
@@ -350,6 +398,7 @@ public class ClientView extends JFrame {
 		btnUpdate.setEnabled(false);
 		btnDelete.setEnabled(false);
 		txtName.setText("");
+		txtPhone.setText("");
 		txtEmail.setText("");
 		txtCompanyName.setText("");
 		txtCompanyAddress.setText("");
@@ -361,7 +410,7 @@ public class ClientView extends JFrame {
 	}
 
 	public void showList() {
-		String data[] = new String[6];
+		String data[] = new String[7];
 		ClientController pc = new ClientController();
 		try {
 			List<ClientModel> list = pc.selectall();
@@ -369,9 +418,11 @@ public class ClientView extends JFrame {
 			for (ClientModel pm : list) {
 				data[0] = Integer.toString(pm.getClient_id());
 				data[1] = pm.getName();
-				data[2] = pm.getEmail();
-				data[3] = pm.getCompany_name();
-				data[4] = pm.getCompany_address();
+				data[2]=  pm.getPhone();
+				data[3] = pm.getEmail();
+				data[4] = pm.getCompany_name();
+				data[5] = pm.getCompany_address();
+				data[6] = "Delete";
 				
 				
 				dtm.addRow(data);

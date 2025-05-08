@@ -14,8 +14,9 @@ import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JDayChooser;
 
 import config.Checking;
-
+import config.MySqlQuery;
 import controller.EmployeeController;
+import controller.ProjectController;
 import model.EmployeeModel;
 
 
@@ -25,7 +26,9 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 
 public class EmployeeView extends JFrame {
@@ -40,6 +43,9 @@ public class EmployeeView extends JFrame {
 	private JTextField txtName;
 	private JTextField txtEmail;
 	private JTextField txtPassword;
+	private JComboBox cboRoleID;
+	Map<String, Integer> roleMap = new HashMap<>();
+	private JTextField txtPhone;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -82,11 +88,17 @@ public class EmployeeView extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				EmployeeController ec=new EmployeeController();
 				int r = tblEmployee.getSelectedRow();
+				int column = tblEmployee.columnAtPoint(e.getPoint());
+				EmployeeModel pm=new EmployeeModel();
 				String Employee_id = (String)tblEmployee.getValueAt(r, 0);
 				System.out.println(Employee_id);
 				txtEmployeeID.setText(Employee_id);
 				txtName.setText((String)tblEmployee.getValueAt(r, 1));
-				txtEmail.setText((String)tblEmployee.getValueAt(r, 2));
+				txtPhone.setText((String)tblEmployee.getValueAt(r, 2));
+				txtEmail.setText((String)tblEmployee.getValueAt(r, 3));
+				 
+			    String statusName = (String) tblEmployee.getValueAt(r, 5);
+				cboRoleID.setSelectedItem(statusName);
 				try {
 					txtPassword.setText(ec.getPswbyId(Employee_id));
 				} catch (SQLException e1) {
@@ -99,6 +111,32 @@ public class EmployeeView extends JFrame {
 				btnDelete.setEnabled(true);
 				txtName.requestFocus();
 				txtName.selectAll();
+				if (column == 6) {
+		        	DefaultTableModel model = (DefaultTableModel) tblEmployee.getModel();
+	                String employeeId = (String) model.getValueAt(r, 0);
+	                pm.setEmployee_id(employeeId);
+
+	                try {	                	
+	                	if(JOptionPane.showConfirmDialog(null,"Are you sure you want to delete?","Confrim",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+	                		EmployeeController pc = new EmployeeController();
+							int rs = pc.delete(pm);
+							if(rs==1) {
+								
+								JOptionPane.showMessageDialog(null,"Delete Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
+//								AutoID();
+								showList();
+								clear();
+								
+							}else {
+								System.out.println(rs);
+								JOptionPane.showMessageDialog(null,"Delete fails");
+							}
+						}
+	                } catch (Exception ex) {
+	                    ex.printStackTrace();
+	                    JOptionPane.showMessageDialog(null, "Error while deleting: " + ex.getMessage());
+	                }
+		        }
 			}
 		});
 		JScrollPane tableScrollPane = new JScrollPane(tblEmployee);
@@ -123,8 +161,8 @@ public class EmployeeView extends JFrame {
 		lblTeam.setBounds(347, 25, 46, 14);
 		formPanel.add(lblTeam);
 
-		JComboBox cboRoleID = new JComboBox();
-		cboRoleID.setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5" }));
+		cboRoleID = new JComboBox();
+		MySqlQuery.addCoboBox("role", "role_id", "role_name", cboRoleID, roleMap);
 		cboRoleID.setBounds(420, 23, 200, 30);
 		formPanel.add(cboRoleID);
 
@@ -147,13 +185,15 @@ public class EmployeeView extends JFrame {
 
 				pm.setEmployee_id(txtEmployeeID.getText().toString());
 				pm.setEmployee_name(txtName.getText().toString());
+				pm.setPhone(txtPhone.getText().toString());
 				pm.setEmail(txtEmail.getText().toString());
 				pm.setPassword(txtPassword.getText().toString());
 
-				int statusId = Integer.parseInt(cboRoleID.getSelectedItem().toString());
-				pm.setRole_id(statusId);
+//				int statusId = Integer.parseInt(cboRoleID.getSelectedItem().toString());
+//				pm.setRole_id(statusId);
 				if(		Checking.IsValidName(pm.getEmployee_name()) || 
 						Checking.IsValidName(pm.getPassword()) || 
+						Checking.IsValidName(pm.getPhone()) || 
 						Checking.IsValidName(pm.getEmail()) ||
 						Checking.IsValidName(pm.getEmployee_id())
 						
@@ -176,11 +216,11 @@ public class EmployeeView extends JFrame {
 //					txtShowAll.requestFocus(true);
 //					txtShowAll.selectAll();
 					}
-//				else if(!Checking.isPhoneNo(pm.getPhone())) {
-//					JOptionPane.showMessageDialog(null, "Phone_number Format Error","Invlaid", JOptionPane.ERROR_MESSAGE);
-////					txtShowAll.requestFocus(true);
-////					txtShowAll.selectAll();
-//				}
+				else if(!Checking.isPhoneNo(pm.getPhone())) {
+					JOptionPane.showMessageDialog(null, "Phone_number Format Error","Invlaid", JOptionPane.ERROR_MESSAGE);
+//					txtShowAll.requestFocus(true);
+//					txtShowAll.selectAll();
+				}
 				else {
 
 				
@@ -219,8 +259,11 @@ public class EmployeeView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				EmployeeModel pm = new EmployeeModel();
 				EmployeeController pc = new EmployeeController();
-				if(txtEmployeeID.getText().trim().toString().equals("")||txtName.getText().trim().toString().equals("") ||
-						txtEmail.getText().trim().toString().equals("")||txtPassword.getText().trim().toString().equals("")) {
+				if(txtEmployeeID.getText().trim().toString().equals("")||
+						txtName.getText().trim().toString().equals("") ||
+						txtPhone.getText().trim().toString().equals("") ||
+						txtEmail.getText().trim().toString().equals("")||
+						txtPassword.getText().trim().toString().equals("")) {
 					JOptionPane.showMessageDialog(null, "There is a blank field!","Fail", JOptionPane.ERROR_MESSAGE);
 //					txtShowAll.requestFocus(true);
 //					txtShowAll.selectAll();
@@ -228,17 +271,25 @@ public class EmployeeView extends JFrame {
 
 				pm.setEmployee_id(txtEmployeeID.getText().toString());
 				pm.setEmployee_name(txtName.getText().toString());
+				pm.setPhone(txtPhone.getText().toString());
 				pm.setEmail(txtEmail.getText().toString());
 				pm.setPassword(txtPassword.getText().toString());
 
-				int statusId = Integer.parseInt(cboRoleID.getSelectedItem().toString());
-				pm.setRole_id(statusId);
-				
+				String selectedRole = (String) cboRoleID.getSelectedItem();
+				int roleId = roleMap.get(selectedRole);
+				pm.setRole_id(roleId);
+
 					if(Checking.IsValidName(pm.getEmployee_name()) ) {
 						JOptionPane.showMessageDialog(null, "Invlaid name field","Invlaid", JOptionPane.ERROR_MESSAGE);
 						txtName.requestFocus(true);
 						txtName.selectAll();
-					}else if(Checking.IsValidName(pm.getPassword())) {
+					}
+					else if(!Checking.IsEmailformat(pm.getEmail())) {
+						JOptionPane.showMessageDialog(null, "Email Format Error","Invlaid", JOptionPane.ERROR_MESSAGE);
+//						txtShowAll.requestFocus(true);
+//						txtShowAll.selectAll();
+						}
+					else if(Checking.IsValidName(pm.getPassword())) {
 						JOptionPane.showMessageDialog(null, "Invlaid email field","Invlaid", JOptionPane.ERROR_MESSAGE);
 						txtPassword.requestFocus(true);
 						txtPassword.selectAll();
@@ -312,6 +363,15 @@ public class EmployeeView extends JFrame {
 		txtPassword.setBounds(91, 154, 200, 30);
 		formPanel.add(txtPassword);
 		
+		JLabel lblPhone = new JLabel("Phone");
+		lblPhone.setBounds(347, 72, 80, 30);
+		formPanel.add(lblPhone);
+		
+		txtPhone = new JTextField();
+		txtPhone.setColumns(10);
+		txtPhone.setBounds(420, 72, 200, 30);
+		formPanel.add(txtPhone);
+		
 		rightPanel.add(tableScrollPane);
 
 		// Add right panel to main frame
@@ -333,15 +393,19 @@ public class EmployeeView extends JFrame {
 	{
 	     dtm.addColumn("ID");
 	     dtm.addColumn("Name");
+	     dtm.addColumn("Phone");
 	     dtm.addColumn("Email");
 	     dtm.addColumn("Status");
 	     dtm.addColumn("Role");
+	     dtm.addColumn("Action");
 	     tblEmployee.setModel(dtm);
 	     setColumnWidth(0,60);
 	     setColumnWidth(1,60);
 	     setColumnWidth(2,150);
 	     setColumnWidth(3,100);
 	     setColumnWidth(4,100);
+	     setColumnWidth(5,100);
+	     setColumnWidth(6,100);
 
 	    
 	     
@@ -353,6 +417,7 @@ public class EmployeeView extends JFrame {
 		btnDelete.setEnabled(false);
 		txtEmployeeID.setText("");
 		txtName.setText("");
+		txtPhone.setText("");
 		txtEmail.setText("");
 		txtPassword.setText("");
 		
@@ -361,7 +426,7 @@ public class EmployeeView extends JFrame {
 	}
 
 	public void showList() {
-		String data[] = new String[6];
+		String data[] = new String[7];
 		EmployeeController pc = new EmployeeController();
 		try {
 			List<EmployeeModel> list = pc.selectall();
@@ -369,16 +434,26 @@ public class EmployeeView extends JFrame {
 			for (EmployeeModel pm : list) {
 				data[0] = pm.getEmployee_id();
 				data[1] = pm.getEmployee_name();
-				data[2] = pm.getEmail();
+				data[2] = pm.getPhone();
+				data[3] = pm.getEmail();
 //				data[3] = pm.getPassword();
-				data[3] = pm.getStatus();
-				data[4] = Integer.toString(pm.getRole_id());
-				
+				data[4] = pm.getStatus();
+				data[5] = getNameById(roleMap,pm.getRole_id());
+				data[6]="Delete";
 				dtm.addRow(data);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static String getNameById(Map<String, Integer> map, int id) {
+	    for (Map.Entry<String, Integer> entry : map.entrySet()) {
+	        if (entry.getValue() == id) {
+	            return entry.getKey();
+	        }
+	    }
+	    return null;
 	}
 }

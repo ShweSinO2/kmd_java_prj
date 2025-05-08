@@ -65,6 +65,33 @@ public class MySqlQuery {
 	        e.printStackTrace();
 	    }
 	}
+	
+	public static void addCoboBoxV2(JComboBox<String> comboBox, Map<String, String> dataMap,int milestone_id) {
+//	    String columnName = columnName1 +", "+ columnName2;
+		String sql = "SELECT  *  FROM milestone m JOIN "
+				+ "project p ON m.project_id = p.project_id"
+				+ "JOIN team_member tm ON p.team_id = tm.team_id "
+				+ "WHERE m.milestone_id = ?" ;
+	    try {
+	        PreparedStatement ps = con.prepareStatement(sql);
+	        ps.setInt(1, milestone_id);
+	        ResultSet rs = ps.executeQuery();
+	        comboBox.removeAllItems();
+	        comboBox.addItem("-Select-");
+	        dataMap.clear();
+
+	        while (rs.next()) {
+	            String id = rs.getString("m.employee_id");
+	            String name = rs.getString("m.employee_name");
+
+	            comboBox.addItem(name);
+	            dataMap.put(name, id);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
 
 
 	public static void main(String[] args) {

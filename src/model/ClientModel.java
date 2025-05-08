@@ -5,6 +5,7 @@ public class ClientModel {
 	private int client_id;
 	private String name;
 	private String email;
+	private String phone;
 	private String company_name;
 	private String company_address;
 	
@@ -37,6 +38,12 @@ public class ClientModel {
 	}
 	public void setCompany_address(String company_address) {
 		this.company_address = company_address;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }

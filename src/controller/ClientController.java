@@ -1,7 +1,6 @@
 package controller;
 
 import java.sql.*;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import config.DBConfig;
 //import controller.EmployeController;
 //import model.CustomerModel;
 import model.ClientModel;
+import model.EmployeeModel;
 
 public class ClientController {
 	public static Connection con = null;
@@ -28,15 +28,16 @@ public class ClientController {
 
 	public int insert(ClientModel dain) {
 		int result = 0;
-		String sql = "insert into pj_management.client (client_id,name,email,company_name,company_address) values(?,?,?,?,?)";
+		String sql = "insert into pj_management.client (client_id,name,phone,email,company_name,company_address) values(?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 			ps.setInt(1,dain.getClient_id());
 			ps.setString(2, dain.getName());
-			ps.setString(3, dain.getEmail());
-			ps.setString(4, dain.getCompany_name());
-			ps.setString(5, dain.getCompany_address());
+			ps.setString(3,dain.getPhone());
+			ps.setString(4, dain.getEmail());
+			ps.setString(5, dain.getCompany_name());
+			ps.setString(6, dain.getCompany_address());
 			
 			
 
@@ -50,16 +51,17 @@ public class ClientController {
 	
 	public int update(ClientModel dain) {
 		int result = 0;
-		String sql = "update pj_management.client set name=?,email=?,company_name=?,company_address=? where client_id=? ";
+		String sql = "update pj_management.client set name=?,phone=?,email=?,company_name=?,company_address=? where client_id=? ";
 		
 		try {
 			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 			
 			ps.setString(1, dain.getName());
-			ps.setString(2, dain.getEmail());
-			ps.setString(3, dain.getCompany_name());
-			ps.setString(4,dain.getCompany_address());
-			ps.setInt(5,dain.getClient_id());
+			ps.setString(2, dain.getPhone());
+			ps.setString(3, dain.getEmail());
+			ps.setString(4, dain.getCompany_name());
+			ps.setString(5,dain.getCompany_address());
+			ps.setInt(6,dain.getClient_id());
 			
 			
 			result = ps.executeUpdate();
@@ -69,6 +71,23 @@ public class ClientController {
 		}
 		return result;
 	}
+	
+	public int delete(ClientModel dain) {
+		// TODO Auto-generated method stub
+		int result = 0;
+		String sql = "delete from pj_management.client where client_id=?";
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setInt(1, dain.getClient_id());
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Delete Fail,Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
+		}
+		return result;
+	}
+	
 	
 	public int getIDbyName (String name) throws SQLException
 	{	int id = 0;
@@ -108,6 +127,7 @@ public class ClientController {
 			ClientModel pm = new ClientModel();
 			pm.setClient_id(rs.getInt("client_id"));
 			pm.setName(rs.getString("name"));
+			pm.setPhone(rs.getString("phone"));
 			pm.setEmail(rs.getString("email"));
 			pm.setCompany_name(rs.getString("company_name"));
 			pm.setCompany_address(rs.getString("company_address"));

@@ -1,7 +1,6 @@
 package controller;
 
 import java.sql.*;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import config.DBConfig;
 import controller.EmployeeController;
 //import model.CustomerModel;
 import model.EmployeeModel;
+import model.ProjectModel;
 
 public class EmployeeController {
 	public static Connection con = null;
@@ -28,16 +28,17 @@ public class EmployeeController {
 
 	public int insert(EmployeeModel dain) {
 		int result = 0;
-		String sql = "insert into pj_management.employee (employee_id,name,email,password,status,role_id) values(?,?,?,?,?,?)";
+		String sql = "insert into pj_management.employee (employee_id,name,phone,email,password,status,role_id) values(?,?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 			ps.setString(1,dain.getEmployee_id());
 			ps.setString(2, dain.getEmployee_name());
-			ps.setString(3, dain.getEmail());
-			ps.setString(4, dain.getPassword());
-			ps.setString(5,"Active");
-			ps.setInt(6,dain.getRole_id());
+			ps.setString(3,dain.getPhone());
+			ps.setString(4, dain.getEmail());
+			ps.setString(5, dain.getPassword());
+			ps.setString(6,"In Active");
+			ps.setInt(7,dain.getRole_id());
 			
 
 			result = ps.executeUpdate();
@@ -50,23 +51,40 @@ public class EmployeeController {
 	
 	public int update(EmployeeModel dain) {
 		int result = 0;
-		String sql = "update pj_management.employee set name=?,email=?,password=?,status=?,role_id=? where employee_id=? ";
+		String sql = "update pj_management.employee set name=?,phone=?,email=?,password=?,status=?,role_id=? where employee_id=? ";
 		
 		try {
 			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 			
 			ps.setString(1, dain.getEmployee_name());
-			ps.setString(2, dain.getEmail());
-			ps.setString(3, dain.getPassword());
-			ps.setString(4,"Active");
-			ps.setInt(5,dain.getRole_id());
-			ps.setString(6,dain.getEmployee_id());
+			ps.setString(2,dain.getPhone());
+			ps.setString(3, dain.getEmail());
+			ps.setString(4, dain.getPassword());
+			ps.setString(5,"Active");
+			ps.setInt(6,dain.getRole_id());
+			ps.setString(7,dain.getEmployee_id());
 			
 			
 			result = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public int delete(EmployeeModel dain) {
+		// TODO Auto-generated method stub
+		int result = 0;
+		String sql = "delete from pj_management.employee where employee_id=?";
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setString(1, dain.getEmployee_id());
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Delete Fail,Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
 		}
 		return result;
 	}
@@ -109,6 +127,7 @@ public class EmployeeController {
 			EmployeeModel pm = new EmployeeModel();
 			pm.setEmployee_id(rs.getString("employee_id"));
 			pm.setEmployee_name(rs.getString("name"));
+			pm.setPhone(rs.getString("phone"));
 			pm.setEmail(rs.getString("email"));
 			pm.setPassword(rs.getString("password"));
 			pm.setStatus(rs.getString("status"));

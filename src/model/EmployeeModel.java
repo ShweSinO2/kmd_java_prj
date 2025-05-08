@@ -3,6 +3,7 @@ package model;
 public class EmployeeModel {
 	private String employee_id;
 	private String employee_name;
+	private String phone;
 	private String email;
 	private String password;
 	private String status;
@@ -72,6 +73,14 @@ public class EmployeeModel {
 
 	public void setRole_id(int role_id) {
 		this.role_id = role_id;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }
