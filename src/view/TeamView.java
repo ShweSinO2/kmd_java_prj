@@ -61,7 +61,7 @@ public class TeamView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel();
+		SideMenuPanel sideMenu = new SideMenuPanel("TeamView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();

@@ -75,7 +75,7 @@ public class TaskView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel();
+		SideMenuPanel sideMenu = new SideMenuPanel("TaskView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();

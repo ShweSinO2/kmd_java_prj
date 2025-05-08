@@ -66,7 +66,7 @@ public class ClientView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel();
+		SideMenuPanel sideMenu = new SideMenuPanel("ClientView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();

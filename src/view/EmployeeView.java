@@ -70,7 +70,7 @@ public class EmployeeView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel();
+		SideMenuPanel sideMenu = new SideMenuPanel("EmployeeView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();
