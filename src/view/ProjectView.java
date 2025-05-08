@@ -48,8 +48,7 @@ public class ProjectView extends JFrame {
 		// TODO Auto-generated method stub
 		try {
 			ProjectView prjFrame = new ProjectView();
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			prjFrame.setBounds(0, 0, screenSize.width, screenSize.height);
+			prjFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			prjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			prjFrame.setVisible(true);
 		} catch (Exception e) {
@@ -58,14 +57,14 @@ public class ProjectView extends JFrame {
 	}
 
 	public ProjectView() {
-		setTitle("Projects");
+		setTitle("Project List");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(900, 600);
 		setLocationRelativeTo(null);
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel();
+		SideMenuPanel sideMenu = new SideMenuPanel("ProjectView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();
@@ -135,7 +134,6 @@ public class ProjectView extends JFrame {
 							if(rs==1) {
 								
 								JOptionPane.showMessageDialog(null,"Delete Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
-//								AutoID();
 								showList();
 								clear();
 								

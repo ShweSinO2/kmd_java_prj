@@ -2,15 +2,18 @@ package view;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 import controller.EmployeeController;
 import model.EmployeeModel;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -19,6 +22,8 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 class BackgroundPanel extends JPanel {
     private Image backgroundImage;
@@ -38,8 +43,9 @@ class BackgroundPanel extends JPanel {
 
 public class LoginView extends JFrame{
 	private JTextField txtUsername;
-	private JTextField txtPassword;
+	private JPasswordField txtPassword;
 	public LoginView() {
+		setTitle("Project Management System");
 		getContentPane().setLayout(null);
 		
 		BackgroundPanel outerPanel = new BackgroundPanel("src/images/bg.png"); // Use full path or place in resources
@@ -89,7 +95,7 @@ public class LoginView extends JFrame{
 		lblNewLabel_1_1.setBounds(26, 139, 212, 14);
 		innerPanel.add(lblNewLabel_1_1);
 		
-		txtPassword = new JTextField();
+		txtPassword = new JPasswordField();
 		txtPassword.setBounds(26, 164, 242, 28);
 		txtPassword.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		txtPassword.setBorder(BorderFactory.createCompoundBorder(
@@ -100,16 +106,59 @@ public class LoginView extends JFrame{
 		txtPassword.setColumns(10);
 		innerPanel.add(txtPassword);
 		
-		JButton btnNewButton = new JButton("Login");
+		// Eye toggle button
+		JButton toggleBtn = new JButton("\uD83D\uDC41");
+		toggleBtn.setBackground(new Color(64, 0, 64));
+		toggleBtn.setBounds(240, 164, 28, 28);
+		toggleBtn.setFocusable(false);
+		toggleBtn.setBorderPainted(false);
+		toggleBtn.setContentAreaFilled(false);
+		toggleBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+		innerPanel.add(toggleBtn);
+
+		// Toggle show/hide password
+		toggleBtn.addActionListener(new ActionListener() {
+		    private boolean showing = false;
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        if (showing) {
+		            txtPassword.setEchoChar('•'); // hide
+		        } else {
+		            txtPassword.setEchoChar((char) 0); // show
+		        }
+		        showing = !showing;
+		    }
+		});
 		
-		btnNewButton.setBackground(new Color(153, 76, 0));
-		btnNewButton.setForeground(Color.WHITE);
-		btnNewButton.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnNewButton.setBorder(new LineBorder(new Color(102, 51, 0), 1, true));
-		btnNewButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		JButton btnLogin = new JButton("Login");
 		
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		btnLogin.setUI(new BasicButtonUI());
+		btnLogin.setBackground(new Color(153, 76, 0));
+		btnLogin.setForeground(Color.WHITE);
+		btnLogin.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnLogin.setBorder(new LineBorder(new Color(102, 51, 0), 1, true));
+		btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnLogin.setFocusPainted(false);
+		btnLogin.setContentAreaFilled(true);
+		btnLogin.setBorderPainted(false); 
+		
+		// Prevent background from changing when clicked
+		btnLogin.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				btnLogin.setBackground(new Color(204, 102, 0)); 
+			}
+			
+			@Override
+		    public void mouseReleased(MouseEvent e) {
+		        btnLogin.setBackground(new Color(153, 76, 0)); // Reset to default
+		    }
+		});
+		
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {				    
 				if(txtUsername.getText().trim().toString().equals("")) {
 					JOptionPane.showMessageDialog(null, "Username is a blank field!","Fail", JOptionPane.ERROR_MESSAGE);
 					txtUsername.requestFocus(true);
@@ -134,8 +183,9 @@ public class LoginView extends JFrame{
 							
 							System.out.println(ec.loginState(em));
 							dispose();
-							ProjectView pjv = new ProjectView();
-							pjv.show();
+							ProjectView prjFrame = new ProjectView();
+							prjFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+							prjFrame.setVisible(true);
 						}
 						else
 						{
@@ -151,8 +201,8 @@ public class LoginView extends JFrame{
 				}
 			}
 		});
-		btnNewButton.setBounds(26, 220, 242, 28);
-		innerPanel.add(btnNewButton);
+		btnLogin.setBounds(26, 220, 242, 28);
+		innerPanel.add(btnLogin);
 		
 //		JLabel lblNewLabel_2 = new JLabel("Project Management System");
 //		lblNewLabel_2.setFont(new Font("SansSerif", Font.PLAIN, 16));

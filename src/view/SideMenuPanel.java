@@ -5,14 +5,17 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 
 public class SideMenuPanel extends JPanel {
 	private CardLayout cardLayout;
 	private JPanel contentPanel;
 	private JButton activeButton = null;
+    private final Map<String, JButton> buttonMap = new HashMap<>();
 
-	public SideMenuPanel() {
+	public SideMenuPanel(String activeViewName) {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBackground(new Color(33, 37, 41));
 		setPreferredSize(new Dimension(200, 600));
@@ -29,52 +32,63 @@ public class SideMenuPanel extends JPanel {
 		add(lblTitle);
 
 		// Add menu buttons with spacing
-		add(createMenuButton("Project", "ProjectView"));
-		add(Box.createRigidArea(new Dimension(0, 10)));
-		add(createMenuButton("Task", "TaskView"));
-		add(Box.createRigidArea(new Dimension(0, 10)));
-		add(createMenuButton("Attachment", "AttachmentView"));
-		add(Box.createRigidArea(new Dimension(0, 10)));
-		add(createMenuButton("Employee", "EmployeeView"));
-		add(Box.createRigidArea(new Dimension(0, 10)));
-		add(createMenuButton("Team", "TeamView"));
-		add(Box.createRigidArea(new Dimension(0, 10)));
-		add(createMenuButton("Client", "ClientView"));
-		add(Box.createRigidArea(new Dimension(0, 10)));
-		add(createMenuButton("Notification", "NotificationView"));
-		add(Box.createRigidArea(new Dimension(0, 10)));
-		add(createMenuButton("Logout", "LoginView"));
-
-//		add(createMenuButton("Employee"));
-//		add(Box.createRigidArea(new Dimension(0, 10)));
-//		add(createMenuButton("Project"));
-//		add(Box.createRigidArea(new Dimension(0, 10)));
-//		add(createMenuButton("Task"));
-//		add(Box.createRigidArea(new Dimension(0, 10)));
-//		add(createMenuButton("Team"));
-//		add(Box.createRigidArea(new Dimension(0, 10)));
-//		add(createMenuButton("Notification"));
+		addButton("Project", "ProjectView");
+		addSpacer();
+		addButton("Task", "TaskView");
+		addSpacer();
+		addButton("Attachment", "AttachmentView");
+		addSpacer();
+		addButton("Employee", "EmployeeView");
+		addSpacer();
+		addButton("Team", "TeamView");
+		addSpacer();
+		addButton("TeamMember", "TeamMember");
+		addSpacer();
+		addButton("Client", "ClientView");
+		addSpacer();
+		addButton("Notification", "NotificationView");
+		addSpacer();
+		addButton("Logout", "LoginView");
 
 		add(Box.createVerticalGlue());
+
+		// Activate the correct button initially
+		setInitialActiveButton(activeViewName);
 
 		contentPanel = new JPanel();
 		cardLayout = new CardLayout();
 		contentPanel.setLayout(cardLayout);
-
-		// Add views
-//		contentPanel.add(new EmployeeView(), "employee");
-//		contentPanel.add(new TaskView(), "task");
-//		add(contentPanel, BorderLayout.CENTER);
-
 	}
 
-	private JButton createMenuButton(String text, String viewName) {
-		JButton button = new JButton(text);
+	private void addButton(String title, String viewName) {
+		JButton button = createMenuButton(title, viewName);
+		buttonMap.put(viewName, button);
+		add(button);
+	}
+
+	private void addSpacer() {
+		add(Box.createRigidArea(new Dimension(0, 10)));
+	}
+
+	private void setInitialActiveButton(String viewName) {
+		JButton button = buttonMap.get(viewName);
+		if (button != null) {
+			if (activeButton != null) {
+				activeButton.setBackground(new Color(52, 58, 64));
+			}
+			activeButton = button;
+			activeButton.setBackground(new Color(255, 111, 0));
+		}
+	}
+
+	private JButton createMenuButton(String title, String viewName) {
+		JButton button = new JButton(title);
 		button.setAlignmentX(Component.LEFT_ALIGNMENT);
 		button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 		button.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		button.setForeground(Color.WHITE);
 		button.setBackground(new Color(52, 58, 64));
+		button.setOpaque(true);
 		button.setFocusPainted(false);
 		button.setBorderPainted(false);
 		button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -84,14 +98,12 @@ public class SideMenuPanel extends JPanel {
 		// Hover effect
 		button.addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {
-//				button.setBackground(new Color(255, 111, 0));
 			    if (button != activeButton) {
 	                button.setBackground(new Color(255, 111, 0));
 	            }
 			}
 
 			public void mouseExited(MouseEvent e) {
-//				button.setBackground(new Color(52, 58, 64));
 				   if (button != activeButton) {
 		                button.setBackground(new Color(52, 58, 64));
 		            }
@@ -100,49 +112,60 @@ public class SideMenuPanel extends JPanel {
 
 		// Switch view on click
 		button.addActionListener(e -> {
-		    // Close current window
-		    Window currentWindow = SwingUtilities.getWindowAncestor(button);
-		    if (currentWindow != null) {
-		        currentWindow.dispose();
-		    }
-		    
-	        switch (viewName) {
-	            case "LoginView":
-	                new LoginView().setVisible(true);
-	                break;
-	            case "ProjectView":
-	                new ProjectView().setVisible(true);
-	                break;
-	            case "TaskView":
-//	                new TaskView().setVisible(true);
-	                break;
-	            case "AttachmentView":
-	                new AttachmentView().setVisible(true);
-	                break;
-	            case "ClientView":
-	                new ClientView().setVisible(true);
-	                break;
-	            case "EmployeeView":
-	                new EmployeeView().setVisible(true);
-	                break;
-	            case "TeamView":
-	                new TeamView().setVisible(true);
-	                break;
-	            case "NotificationView":
-//	                new NotificationView().setVisible(true);
-	                break;
-	            default:
-	                JOptionPane.showMessageDialog(null, "Unknown view: " + viewName);
-	        }
+			// Close current window
+			Window currentWindow = SwingUtilities.getWindowAncestor(button);
+			if (currentWindow != null) {
+				currentWindow.dispose();
+			}
 
-	        // 3. Update active button style
-	        if (activeButton != null) {
-	            activeButton.setBackground(new Color(52, 58, 64)); // reset previous
-	        }
-	        activeButton = button;
-	        button.setBackground(new Color(255, 111, 0)); // active color
-	    });
+			// Open corresponding view in full screen
+			JFrame frameToOpen = null;
+			switch (viewName) {
+			case "LoginView":
+				frameToOpen = new LoginView();
+				break;
+			case "ProjectView":
+				frameToOpen = new ProjectView();
+				break;
+			case "TaskView":
+				// frameToOpen = new TaskView();
+				break;
+			case "AttachmentView":
+				frameToOpen = new AttachmentView();
+				break;
+			case "ClientView":
+				frameToOpen = new ClientView();
+				break;
+			case "EmployeeView":
+				frameToOpen = new EmployeeView();
+				break;
+			case "TeamView":
+				frameToOpen = new TeamView();
+				break;
+			case "TeamMember":
+				frameToOpen = new TeamMember();
+				break;
+			case "NotificationView":
+				// frameToOpen = new NotificationView();
+				break;
+			default:
+				JOptionPane.showMessageDialog(null, "Unknown view: " + viewName);
+			}
 
-	    return button;
+			if (frameToOpen != null) {
+				frameToOpen.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				frameToOpen.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				frameToOpen.setVisible(true);
+			}
+
+			// 3. Update active button style
+			if (activeButton != null) {
+				activeButton.setBackground(new Color(52, 58, 64)); // reset previous
+			}
+			activeButton = button;
+			button.setBackground(new Color(255, 111, 0)); // active color
+		});
+
+		return button;
 	}
 }
