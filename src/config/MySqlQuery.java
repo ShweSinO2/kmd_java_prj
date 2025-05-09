@@ -108,9 +108,10 @@ public class MySqlQuery {
 	
 	public static void addCoboBoxV2(JComboBox<String> comboBox, Map<String, String> dataMap,int milestone_id) {
 //	    String columnName = columnName1 +", "+ columnName2;
-		String sql = "SELECT * FROM milestone m "
-	             + "JOIN project p ON m.project_id = p.project_id "
-	             + "JOIN team_member tm ON p.team_id = tm.team_id "
+		String sql = "SELECT * FROM employee e "
+				+ " JOIN team_member tm ON tm.employee_id = e.employee_id "
+	             + "JOIN project p ON p.team_id = tm.team_id "
+	             + "JOIN milestone m ON  m.project_id = p.project_id  "
 	             + "WHERE m.milestone_id = ?" ;
 	    try {
 	        PreparedStatement ps = con.prepareStatement(sql);
@@ -121,8 +122,8 @@ public class MySqlQuery {
 	        dataMap.clear();
 
 	        while (rs.next()) {
-	            String id = rs.getString("m.employee_id");
-	            String name = rs.getString("m.employee_name");
+	            String id = rs.getString("e.employee_id");
+	            String name = rs.getString("e.name");
 
 	            comboBox.addItem(name);
 	            dataMap.put(name, id);

@@ -198,6 +198,7 @@ public class EmployeeView extends JFrame {
 						Checking.IsValidName(pm.getPassword()) || 
 						Checking.IsValidName(pm.getPhone()) || 
 						Checking.IsValidName(pm.getEmail()) ||
+						cboRoleID.getSelectedIndex() == 0 ||
 						Checking.IsValidName(pm.getEmployee_id())
 						
 						) {
@@ -423,6 +424,7 @@ public class EmployeeView extends JFrame {
 		txtPhone.setText("");
 		txtEmail.setText("");
 		txtPassword.setText("");
+		cboRoleID.setSelectedIndex(0);
 		
 
 		txtEmployeeID.requestFocus(true);

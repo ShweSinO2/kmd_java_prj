@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import config.DBConfig;
+import model.EmployeeModel;
 //import controller.EmployeController;
 //import model.CustomerModel;
 import model.TeamModel;
@@ -65,7 +66,21 @@ public class TeamController {
 		return result;
 	}
 	
-		
+	public int delete(TeamModel dain) {
+		// TODO Auto-generated method stub
+		int result = 0;
+		String sql = "delete from pj_management.team where team_id=?";
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setInt(1, dain.getTeam_id());
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Delete Fail,Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
+		}
+		return result;
+	}
 	
 
 	public boolean isduplicate(TeamModel dain) throws SQLException {

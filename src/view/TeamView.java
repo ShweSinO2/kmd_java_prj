@@ -14,7 +14,7 @@ import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JDayChooser;
 
 import config.Checking;
-
+import controller.EmployeeController;
 import controller.TeamController;
 import model.TeamModel;
 
@@ -34,7 +34,6 @@ public class TeamView extends JFrame {
 	private JTable tblTeam;
 	private JButton btnSave;
 	private JButton btnUpdate;
-	private JButton btnDelete;
 	private JButton btnClear;
 	private JTextField txtTeamName;
 
@@ -75,6 +74,8 @@ public class TeamView extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				TeamController ec=new TeamController();
 				int r = tblTeam.getSelectedRow();
+				int column = tblTeam.columnAtPoint(e.getPoint());
+				TeamModel pm =  new TeamModel();
 				String Team_id = (String)tblTeam.getValueAt(r, 0);
 				System.out.println(Team_id);
 				
@@ -86,6 +87,32 @@ public class TeamView extends JFrame {
 				btnDelete.setEnabled(true);
 				txtTeamName.requestFocus();
 				txtTeamName.selectAll();
+				if (column == 2) {
+		        	DefaultTableModel model = (DefaultTableModel) tblTeam.getModel();
+	                String teamId = (String) model.getValueAt(r, 0);
+	                pm.setTeam_id(Integer.parseInt(teamId));
+
+	                try {	                	
+	                	if(JOptionPane.showConfirmDialog(null,"Are you sure you want to delete?","Confrim",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+	                		TeamController pc = new TeamController();
+							int rs = pc.delete(pm);
+							if(rs==1) {
+								
+								JOptionPane.showMessageDialog(null,"Delete Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
+//								AutoID();
+								showList();
+								clear();
+								
+							}else {
+								System.out.println(rs);
+								JOptionPane.showMessageDialog(null,"Delete fails");
+							}
+						}
+	                } catch (Exception ex) {
+	                    ex.printStackTrace();
+	                    JOptionPane.showMessageDialog(null, "Error while deleting: " + ex.getMessage());
+	                }
+		        }
 			}
 		});
 		JScrollPane tableScrollPane = new JScrollPane(tblTeam);
@@ -217,10 +244,6 @@ public class TeamView extends JFrame {
 		btnUpdate.setBounds(158, 219, 89, 30);
 		formPanel.add(btnUpdate);
 
-		btnDelete = new JButton("Delete");
-		btnDelete.setBounds(280, 219, 89, 30);
-		formPanel.add(btnDelete);
-
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -228,7 +251,7 @@ public class TeamView extends JFrame {
 				txtTeamName.requestFocus(true);
 			}
 		});
-		btnClear.setBounds(411, 219, 89, 30);
+		btnClear.setBounds(288, 219, 89, 30);
 		formPanel.add(btnClear);
 		
 		txtTeamName = new JTextField();
@@ -257,9 +280,11 @@ public class TeamView extends JFrame {
 	{
 	     dtm.addColumn("Team ID");
 	     dtm.addColumn("Team Name");
+	     dtm.addColumn("Action");
 	    
 	     tblTeam.setModel(dtm);
 	     setColumnWidth(0,60);
+	     setColumnWidth(1,60);
 	     setColumnWidth(1,60);
 	     
 
@@ -289,6 +314,7 @@ public class TeamView extends JFrame {
 			for (TeamModel pm : list) {
 				data[0] = Integer.toString(pm.getTeam_id());
 				data[1] = pm.getTeam_name();
+				data[2] = "Delete";
 				
 				
 				dtm.addRow(data);

@@ -114,8 +114,8 @@ public class TaskController {
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			TaskModel pm = new TaskModel();
-			pm.setTask_id(rs.getInt("project_id"));
-			pm.setTask_name(rs.getString("project_name"));
+			pm.setTask_id(rs.getInt("task_id"));
+			pm.setTask_name(rs.getString("task_name"));
 			pm.setDescription(rs.getString("description"));
 			pm.setStart_date(rs.getString("start_date"));
 			pm.setEnd_date(rs.getString("end_date"));

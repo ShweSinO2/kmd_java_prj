@@ -35,7 +35,6 @@ public class ClientView extends JFrame {
 	private JTable tblClient;
 	private JButton btnSave;
 	private JButton btnUpdate;
-	private JButton btnDelete;
 	private JButton btnClear;
 	private JTextField txtName;
 	private JTextField txtEmail;
@@ -92,7 +91,7 @@ public class ClientView extends JFrame {
 				txtCompanyAddress.setText((String)tblClient.getValueAt(r, 5));
 				btnSave.setEnabled(false);
 				btnUpdate.setEnabled(true);
-				btnDelete.setEnabled(true);
+//				btnDelete.setEnabled(true);
 				txtName.requestFocus();
 				txtName.selectAll();
 				
@@ -312,10 +311,6 @@ public class ClientView extends JFrame {
 		btnUpdate.setBounds(158, 219, 89, 30);
 		formPanel.add(btnUpdate);
 
-		btnDelete = new JButton("Delete");
-		btnDelete.setBounds(280, 219, 89, 30);
-		formPanel.add(btnDelete);
-
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -323,7 +318,7 @@ public class ClientView extends JFrame {
 				txtName.requestFocus(true);
 			}
 		});
-		btnClear.setBounds(411, 219, 89, 30);
+		btnClear.setBounds(295, 219, 89, 30);
 		formPanel.add(btnClear);
 		
 		txtName = new JTextField();
@@ -396,7 +391,7 @@ public class ClientView extends JFrame {
 	public void clear() {
 		btnSave.setEnabled(true);
 		btnUpdate.setEnabled(false);
-		btnDelete.setEnabled(false);
+//		btnDelete.setEnabled(false);
 		txtName.setText("");
 		txtPhone.setText("");
 		txtEmail.setText("");
