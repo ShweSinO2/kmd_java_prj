@@ -6,12 +6,14 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +27,23 @@ import javax.swing.table.TableColumn;
 
 import config.MySqlQuery;
 import controller.AttachmentController;
+import controller.ProjectController;
 import controller.TeamMemberController;
 import model.AttachmentModel;
+import model.ProjectModel;
 import model.TeamMemberModel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class TeamMember extends JFrame {
 	DefaultTableModel dtm = new DefaultTableModel();
 	private JTable tblTeamMember;
+	private JButton btnSave;
+	private JButton btnUpdate;
+	private JButton btnClear;
+	private String employeeName;
 	Map<String, Integer> teamMap = new HashMap<>();
+	Map<String, String> employeeMap = new HashMap<>();
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -67,18 +78,6 @@ public class TeamMember extends JFrame {
 		
 		rightPanel.add(formPanel);
 		
-		JButton btnSave = new JButton("Save");
-		btnSave.setBounds(29, 85, 89, 23);
-		formPanel.add(btnSave);
-		
-		JButton btnUpdate = new JButton("Update");
-		btnUpdate.setBounds(155, 85, 89, 23);
-		formPanel.add(btnUpdate);
-		
-		JButton btnClear = new JButton("Clear");
-		btnClear.setBounds(281, 85, 89, 23);
-		formPanel.add(btnClear);
-		
 		JLabel lblTeamName = new JLabel(" Team Name");
 		lblTeamName.setBounds(29, 32, 82, 14);
 		formPanel.add(lblTeamName);
@@ -88,10 +87,12 @@ public class TeamMember extends JFrame {
 		MySqlQuery.addCoboBox("team", "team_id", "team_name", cboTeam, teamMap);
 		formPanel.add(cboTeam);
 		
-		JComboBox<String> comboBox = new JComboBox<>(new String[]{"-Select-", "Option 1", "Option 2 (disabled)", "Option 3"});
-		comboBox.setBounds(411, 24, 120, 31);;
-		formPanel.add(comboBox);
-		comboBox.setRenderer(new DefaultListCellRenderer() {
+		JComboBox<String> cboEmployee = new JComboBox<>();
+		cboEmployee.setBounds(411, 24, 120, 31);
+		MySqlQuery.addCoboBoxEmployee("employee", "employee_id", "name", cboEmployee, employeeMap);
+		formPanel.add(cboEmployee);
+		
+		cboEmployee.setRenderer(new DefaultListCellRenderer() {
 		    @Override
 		    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		        Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -106,9 +107,9 @@ public class TeamMember extends JFrame {
 		    }
 		});
 
-		comboBox.addActionListener(e -> {
-		    if ("Option 2 (disabled)".equals(comboBox.getSelectedItem())) {
-		        comboBox.setSelectedIndex(0); // Revert to default
+		cboEmployee.addActionListener(e -> {
+		    if ("Option 2 (disabled)".equals(cboEmployee.getSelectedItem())) {
+		    	cboEmployee.setSelectedIndex(0); // Revert to default
 		        JOptionPane.showMessageDialog(null, "This member already add in a Team.");
 		    }
 		});
@@ -131,18 +132,132 @@ public class TeamMember extends JFrame {
 		tblTeamMember.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-//				AttachmentModel am = new AttachmentModel();
+				int row = tblTeamMember.rowAtPoint(e.getPoint());
+		        int column = tblTeamMember.columnAtPoint(e.getPoint());
+				TeamMemberModel tmm = new TeamMemberModel();
 //				
-//				int row = tblTeamMember.rowAtPoint(e.getPoint());
-//				int column = tblTeamMember.columnAtPoint(e.getPoint());
-//
-////				Attachment_id = (String) tblTeamMember.getValueAt(row, 0);
-////				am.setAttachment_id(Integer.parseInt(Attachment_id));
-//				am.setFilename((String) tblTeamMember.getValueAt(row, 1));
-//				
+				employeeName = (String)tblTeamMember.getValueAt(row, 0);
+				cboEmployee.setSelectedItem(employeeName);
+				
+				String teamName = (String)tblTeamMember.getValueAt(row, 1);
+				cboTeam.setSelectedItem(teamName);
+				
+				String position = (String)tblTeamMember.getValueAt(row, 2);
+				cboPosition.setSelectedItem(position);	
+				
+				btnSave.setEnabled(false);
+				btnUpdate.setEnabled(true);
+				
+				//delete row for team member
+		        if (column == 3) {
+		        	DefaultTableModel model = (DefaultTableModel) tblTeamMember.getModel();
+	                String employeeId = (String) model.getValueAt(row, 0);
+
+	                try {	                	
+	                	if(JOptionPane.showConfirmDialog(null,"Are you sure you want to delete?","Confrim",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+	                		TeamMemberController tmc = new TeamMemberController();
+							int rs = tmc.delete(tmm, employeeMap.get(employeeName));
+							if(rs==1) {
+								
+								JOptionPane.showMessageDialog(null,"Delete Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
+								showList();
+//								clear();
+								
+							}else {
+								System.out.println(rs);
+								JOptionPane.showMessageDialog(null,"Delete fails");
+							}
+						}
+	                } catch (Exception ex) {
+	                    ex.printStackTrace();
+	                    JOptionPane.showMessageDialog(null, "Error while deleting: " + ex.getMessage());
+	                }
+		        }
+			
 			}
 		});
 		
+		
+		btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TeamMemberModel tmm = new TeamMemberModel();
+				TeamMemberController tmc = new TeamMemberController();
+				// to write form validation
+//        		if(){
+//        			
+//        		}else {
+//        			
+//        		}
+				String selectedTeam = (String) cboTeam.getSelectedItem();
+				int teamId = teamMap.get(selectedTeam);
+				tmm.setTeam_id(teamId);
+				
+				String selectedEmployee = (String) cboEmployee.getSelectedItem();
+				String employeeId = employeeMap.get(selectedEmployee);
+				tmm.setEmployee_id(employeeId);
+				
+				tmm.setPosition((String) cboPosition.getSelectedItem());
+
+				try {
+					int rs = tmc.insert(tmm);
+					if (rs == 1) {
+						JOptionPane.showMessageDialog(null, "Save Successfully", "Successfully",
+								JOptionPane.INFORMATION_MESSAGE);
+//						AutoID();
+						showList();
+//						clear();
+					}
+				} catch (HeadlessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnSave.setBounds(29, 85, 89, 23);
+		formPanel.add(btnSave);
+		
+		btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TeamMemberModel tmm = new TeamMemberModel();
+				TeamMemberController tmc = new TeamMemberController();
+				// to write form validation
+//        		if(){
+//        			
+//        		}else {
+//        			
+//        		}
+				String selectedTeam = (String) cboTeam.getSelectedItem();
+				int teamId = teamMap.get(selectedTeam);
+				tmm.setTeam_id(teamId);
+				
+				String selectedEmployee = (String) cboEmployee.getSelectedItem();
+				String employeeId = employeeMap.get(selectedEmployee);
+				tmm.setEmployee_id(employeeId);
+				
+				tmm.setPosition((String) cboPosition.getSelectedItem());
+
+				try {
+					int rs = tmc.update(tmm, employeeMap.get(employeeName));
+					if (rs == 1) {
+						JOptionPane.showMessageDialog(null, "Update Successfully", "Successfully",
+								JOptionPane.INFORMATION_MESSAGE);
+						showList();
+//						clear();
+					}
+				} catch (HeadlessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnUpdate.setBounds(155, 85, 89, 23);
+		formPanel.add(btnUpdate);
+		
+		btnClear = new JButton("Clear");
+		btnClear.setBounds(281, 85, 89, 23);
+		formPanel.add(btnClear);
 		
 		JScrollPane tableScrollPane = new JScrollPane(tblTeamMember);
 		tableScrollPane.setBounds(10, 156, 664, 433);
@@ -204,7 +319,7 @@ public class TeamMember extends JFrame {
 	    
 	 // Apply center alignment to specific columns
 	    tblTeamMember.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-	    tblTeamMember.getColumnModel().getColumn(2).setCellRenderer(createButtonCellRenderer("Delete"));
+	    tblTeamMember.getColumnModel().getColumn(3).setCellRenderer(createButtonCellRenderer("Delete"));
 	    
 	    // Set custom header renderer
 	    DefaultTableCellRenderer headerRenderer = createHeaderRenderer();
@@ -236,8 +351,8 @@ public class TeamMember extends JFrame {
 	            
 	            //download design
 	            if(buttonText == "Delete") {
-		            label.setBackground(new Color(220, 53, 69));
-		            label.setForeground(Color.WHITE);
+//		            label.setBackground(new Color(220, 53, 69));
+		            label.setForeground(new Color(220, 53, 69));
 	                label.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 //	                label.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 	            }
@@ -274,11 +389,11 @@ public class TeamMember extends JFrame {
 		try {
 			List<TeamMemberModel> list = tmc.selectall();
 			dtm.setRowCount(0);
-			for (TeamMemberModel tmm : list) {		        
-				data[0] = Integer.toString(tmm.getTeam_id());
-				data[1] = tmm.getEmployee_id();
-				data[3] = "Position";
-				data[4] = "Delete";
+			for (TeamMemberModel tmm : list) {	
+				data[0] = getNameByEmployeeId(employeeMap, tmm.getEmployee_id());
+				data[1] = getNameById(teamMap, tmm.getTeam_id());
+				data[2] = tmm.getPosition();
+				data[3] = "Delete";
 //				data[5] = "Delete";
 				
 //				if ("Project".equals(am.getRelated_type())) {
@@ -302,6 +417,15 @@ public class TeamMember extends JFrame {
 	public static String getNameById(Map<String, Integer> map, int id) {
 	    for (Map.Entry<String, Integer> entry : map.entrySet()) {
 	        if (entry.getValue() == id) {
+	            return entry.getKey();
+	        }
+	    }
+	    return null;
+	}
+	
+	public static String getNameByEmployeeId(Map<String, String> map, String id) {
+	    for (Map.Entry<String, String> entry : map.entrySet()) {
+        	if (entry.getValue().equals(id)) {
 	            return entry.getKey();
 	        }
 	    }

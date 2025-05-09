@@ -283,8 +283,6 @@ public class ProjectView extends JFrame {
 //        			
 //        		}
 				pm.setProject_id(Integer.parseInt(Project_id));
-				System.out.println("--------");
-				System.out.println(pm.getProject_id());
 				pm.setProject_name(txtProjectName.getText().toString());
 				pm.setDescription(txtDescription.getText().toString());
 

@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import config.DBConfig;
 import model.AttachmentModel;
+import model.ProjectModel;
 import model.TeamMemberModel;
 
 public class TeamMemberController {
@@ -34,13 +35,66 @@ public class TeamMemberController {
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			TeamMemberModel tmm = new TeamMemberModel();
-			tmm.setAttachment_id(rs.getInt("attachment_id"));
-			tmm.setFilename(rs.getString("filename"));
-			tmm.setRelated_type(rs.getString("related_entity_type"));
-			am.setRelated_id(rs.getInt("related_entity_id"));
-			list.add(am);
+			tmm.setTeam_id(rs.getInt("team_id"));
+			tmm.setEmployee_id(rs.getString("employee_id"));
+			tmm.setPosition(rs.getString("position"));
+//			tmm.setRelated_id(rs.getInt("related_entity_id"));
+			list.add(tmm);
 		}
 		return list;
+	}
+	
+	public int insert(TeamMemberModel dain) {
+		int result = 0;
+		String sql = "insert into pj_management.team_member (team_id,employee_id,position) values(?,?,?)";
+
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setInt(1, dain.getTeam_id());
+			ps.setString(2, dain.getEmployee_id());
+			ps.setString(3, dain.getPosition());
+
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public int update(TeamMemberModel dain, String employee_id) {
+		int result = 0;
+		String sql = "update pj_management.team_member set team_id =?,employee_id=?,position=? where employee_id=?";
+		System.out.println("---");
+		System.out.println(dain.getTeam_id());
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setInt(1, dain.getTeam_id());
+			ps.setString(2, dain.getEmployee_id());
+			ps.setString(3, dain.getPosition());
+			ps.setString(4, employee_id);
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public int delete(TeamMemberModel dain, String employee_id) {
+		// TODO Auto-generated method stub
+		int result = 0;
+		String sql = "delete from pj_management.team_member where employee_id=?";
+		try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setString(1, employee_id);
+			result = ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Delete Fail,Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
+		}
+		return result;
 	}
 
 }
