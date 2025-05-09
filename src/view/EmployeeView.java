@@ -188,7 +188,10 @@ public class EmployeeView extends JFrame {
 				pm.setPhone(txtPhone.getText().toString());
 				pm.setEmail(txtEmail.getText().toString());
 				pm.setPassword(txtPassword.getText().toString());
-
+				
+				String selectedRole = (String) cboRoleID.getSelectedItem();
+				int roleId = roleMap.get(selectedRole);
+				pm.setRole_id(roleId);
 //				int statusId = Integer.parseInt(cboRoleID.getSelectedItem().toString());
 //				pm.setRole_id(statusId);
 				if(		Checking.IsValidName(pm.getEmployee_name()) || 
@@ -309,8 +312,8 @@ public class EmployeeView extends JFrame {
 					
 					else {
 						try {
-							if(pc.isduplicate(pm)) {
-								JOptionPane.showMessageDialog(null, "There is a same supplier name!","Fail", JOptionPane.ERROR_MESSAGE);	
+							if(pc.isduplicate1(pm)) {
+								JOptionPane.showMessageDialog(null, "There is a same employee name!","Fail", JOptionPane.ERROR_MESSAGE);	
 								txtName.requestFocus(true);
 								txtName.selectAll();
 							}else {

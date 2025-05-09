@@ -39,7 +39,6 @@ public class EmployeeController {
 			ps.setString(5, dain.getPassword());
 			ps.setString(6,"In Active");
 			ps.setInt(7,dain.getRole_id());
-			
 
 			result = ps.executeUpdate();
 		} catch (SQLException e) {
@@ -102,8 +101,23 @@ public class EmployeeController {
 		return psw;
 	}
 	
-
 	public boolean isduplicate(EmployeeModel dain) throws SQLException {
+		boolean duplicate = false;
+		String sql = "select * from pj_management.employee where name = ? ";
+		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ps.setString(1, dain.getEmployee_name());
+//		ps.setString(2, dain.getEmployee_id());
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			duplicate = true;
+		} else {
+			duplicate = false;
+		}
+		return duplicate;
+	}
+
+
+	public boolean isduplicate1(EmployeeModel dain) throws SQLException {
 		boolean duplicate = false;
 		String sql = "select * from pj_management.employee where name = ? and employee_id != ?";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
