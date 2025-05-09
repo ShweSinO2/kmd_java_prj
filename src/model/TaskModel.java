@@ -6,6 +6,7 @@ public class TaskModel {
 	private String description;
 	private String start_date;
 	private String end_date;
+	private int project_id;
 	private int status_id;
 	private int milestone_id;
 	private String assigned_id;
@@ -116,6 +117,16 @@ public class TaskModel {
 
 	public void setTask_id(int task_id) {
 		this.task_id = task_id;
+	}
+
+
+	public int getProject_id() {
+		return project_id;
+	}
+
+
+	public void setProject_id(int project_id) {
+		this.project_id = project_id;
 	}
 
 

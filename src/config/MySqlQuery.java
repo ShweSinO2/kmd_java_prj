@@ -87,13 +87,31 @@ public class MySqlQuery {
 	        e.printStackTrace();
 	    }
 	}
+
+	public static void getComboData(String tableName, String columnName1, String columnName2, Map<String, Integer> dataMap) {
+	    String columnName = columnName1 +", "+ columnName2;
+		String sql = "SELECT " + columnName + " FROM "+ tableName;
+	    try {
+	        PreparedStatement ps = con.prepareStatement(sql);
+	        ResultSet rs = ps.executeQuery();
+	        dataMap.clear();
+
+	        while (rs.next()) {
+	            int id = rs.getInt(columnName1);
+	            String name = rs.getString(columnName2);
+	            dataMap.put(name, id);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 	
 	public static void addCoboBoxV2(JComboBox<String> comboBox, Map<String, String> dataMap,int milestone_id) {
 //	    String columnName = columnName1 +", "+ columnName2;
-		String sql = "SELECT  *  FROM milestone m JOIN "
-				+ "project p ON m.project_id = p.project_id"
-				+ "JOIN team_member tm ON p.team_id = tm.team_id "
-				+ "WHERE m.milestone_id = ?" ;
+		String sql = "SELECT * FROM milestone m "
+	             + "JOIN project p ON m.project_id = p.project_id "
+	             + "JOIN team_member tm ON p.team_id = tm.team_id "
+	             + "WHERE m.milestone_id = ?" ;
 	    try {
 	        PreparedStatement ps = con.prepareStatement(sql);
 	        ps.setInt(1, milestone_id);
@@ -113,24 +131,31 @@ public class MySqlQuery {
 	        e.printStackTrace();
 	    }
 	}
-
-	public static void getComboData(String tableName, String columnName1, String columnName2, Map<String, Integer> dataMap) {
-	    String columnName = columnName1 +", "+ columnName2;
-		String sql = "SELECT " + columnName + " FROM "+ tableName;
+	
+	public static void addCoboBoxV1(JComboBox<String> comboBox, Map<String, Integer> dataMap,int project_id) {
+//	    String columnName = columnName1 +", "+ columnName2;
+		String sql = "SELECT  *  FROM milestone WHERE project_id = ?" ;
+				
 	    try {
 	        PreparedStatement ps = con.prepareStatement(sql);
+	        ps.setInt(1, project_id);
 	        ResultSet rs = ps.executeQuery();
+	        comboBox.removeAllItems();
+	        comboBox.addItem("-Select-");
 	        dataMap.clear();
 
 	        while (rs.next()) {
-	            int id = rs.getInt(columnName1);
-	            String name = rs.getString(columnName2);
+	            int id = rs.getInt("milestone_id");
+	            String name = rs.getString("milestone_name");
+
+	            comboBox.addItem(name);
 	            dataMap.put(name, id);
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 	}
+
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

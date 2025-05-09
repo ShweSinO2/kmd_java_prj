@@ -187,11 +187,18 @@ public class MilestoneView extends JFrame {
 				MilestoneModel pm = new MilestoneModel();
 				MilestoneController pc = new MilestoneController();
 				// to write form validation
-//        		if(){
-//        			
-//        		}else {
-//        			
-//        		}
+        		if(		 txtMilestoneName.getText().trim().isEmpty() ||
+			    txtDueDate.getDate() == null ||
+			    cboStatus.getSelectedIndex() == 0 ||
+			    cboProject.getSelectedIndex() == 0
+        				) 
+        		{
+        			JOptionPane.showMessageDialog(null, "There is a blank field!","Fail", JOptionPane.ERROR_MESSAGE);
+//				txtShowAll.requestFocus(true);
+//				txtShowAll.selectAll();
+			
+        		}	else {
+        			
 				pm.setName(txtMilestoneName.getText().toString());
 			
 
@@ -208,6 +215,18 @@ public class MilestoneView extends JFrame {
 				String selectedProject = (String) cboProject.getSelectedItem();
 				int projectId = projectMap.get(selectedProject);
 				pm.setPj_id(projectId);
+				
+				if(Checking.IsValidName(pm.getName()) ) {
+					JOptionPane.showMessageDialog(null, "Invlaid name field","Invlaid", JOptionPane.ERROR_MESSAGE);
+					txtMilestoneName.requestFocus(true);
+					txtMilestoneName.selectAll();
+				}else if(Checking.IsAllDigit(pm.getName())) {
+					JOptionPane.showMessageDialog(null, "Company Name have all digit","Invlaid", JOptionPane.ERROR_MESSAGE);
+					txtMilestoneName.requestFocus(true);
+					txtMilestoneName.selectAll();
+				}
+				
+				else {
 
 				try {
 					if (pc.isduplicate(pm)) {
@@ -229,9 +248,11 @@ public class MilestoneView extends JFrame {
 				} catch (HeadlessException | SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
+				}	}
+			}
 			}
 		});
+		
 		btnSave.setBounds(35, 219, 89, 30);
 		formPanel.add(btnSave);
 
