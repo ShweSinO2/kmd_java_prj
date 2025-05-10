@@ -375,7 +375,7 @@ public class TeamMember extends JFrame {
 	            c.setForeground(Color.WHITE);
 	            setHorizontalAlignment(SwingConstants.CENTER);
 	            setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.GRAY));
-	            setFont(new Font("Arial", Font.BOLD, 12));
+	            setFont(new Font("Arial", Font.BOLD, 14));
 	            return c;
 	        }
 	    };
@@ -394,17 +394,13 @@ public class TeamMember extends JFrame {
 				data[1] = getNameById(teamMap, tmm.getTeam_id());
 				data[2] = tmm.getPosition();
 				data[3] = "Delete";
-//				data[5] = "Delete";
 				
 //				if ("Project".equals(am.getRelated_type())) {
 //					data[2] = getNameById(projectMap, am.getRelated_id());
 //			    } else if ("Task".equals(am.getRelated_type())) {
 //			        data[2] = getNameById(taskMap, am.getRelated_id());
 //			    }
-//				
-//				data[3] = am.getRelated_type();
-//				data[4] = "Download";
-//				data[5] = "Delete";
+
 				dtm.addRow(data);
 			}
 		} catch (SQLException e) {

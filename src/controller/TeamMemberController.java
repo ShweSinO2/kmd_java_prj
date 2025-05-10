@@ -30,7 +30,7 @@ public class TeamMemberController {
 	
 	public List<TeamMemberModel> selectall() throws SQLException {
 		List<TeamMemberModel> list = new ArrayList<TeamMemberModel>();
-		String sql = "select * from pj_management.team_member order by team_id desc";
+		String sql = "select * from pj_management.team_member order by team_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
@@ -38,7 +38,6 @@ public class TeamMemberController {
 			tmm.setTeam_id(rs.getInt("team_id"));
 			tmm.setEmployee_id(rs.getString("employee_id"));
 			tmm.setPosition(rs.getString("position"));
-//			tmm.setRelated_id(rs.getInt("related_entity_id"));
 			list.add(tmm);
 		}
 		return list;

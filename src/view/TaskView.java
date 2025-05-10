@@ -345,9 +345,9 @@ public class TaskView extends JFrame {
 				pm.setPriority_id(priorityId);
 				
 				
-				String selectedType = (String) cboProject.getSelectedItem();
+				String selectedType = (String) cboType.getSelectedItem();
 				int typeId = TypeMap.get(selectedType);
-				pm.setType_id(projectId);
+				pm.setType_id(typeId);
 				
 				if(Checking.IsValidName(pm.getTask_name()) ) {
 					JOptionPane.showMessageDialog(null, "Invlaid name field","Invlaid", JOptionPane.ERROR_MESSAGE);
@@ -531,7 +531,7 @@ public class TaskView extends JFrame {
 		txtDescription.setBounds(389, 11, 200, 30);
 		formPanel.add(txtDescription);
 		
-		JDateChooser txtEndDate = new JDateChooser();
+		txtEndDate = new JDateChooser();
 		txtEndDate.setDateFormatString("yyyy-MM-dd");
 		txtEndDate.setBounds(389, 59, 201, 30);
 		formPanel.add(txtEndDate);
@@ -618,19 +618,20 @@ public class TaskView extends JFrame {
 			List<TaskModel> list = pc.selectall();
 			dtm.setRowCount(0);
 			for (TaskModel pm : list) {
+				MySqlQuery.getComboData2("employee", "employee_id", "name", AssignedMap);
+				MySqlQuery.getComboData("milestone", "milestone_id", "milestone_name", MilestoneMap);
+				
 				data[0] = Integer.toString(pm.getMilestone_id());;
 				data[1] = pm.getTask_name();
 				data[2] = pm.getDescription();
 				data[3] = pm.getStart_date();
 				data[4] = pm.getEnd_date();
-				data[5] = getNameById(ProjectMap, pm.getProject_id());
+				data[5] = pc.returnPjName(pm.getMilestone_id());
 				data[6] = getNameById(MilestoneMap, pm.getMilestone_id());
 				data[7] = getNameById1(AssignedMap, pm.getAssigned_id());
 				data[8] = getNameById(StatusMap, pm.getStatus_id());
 				data[9] = getNameById(PriorityMap, pm.getPriority_id());
-				data[10] = getNameById(TypeMap, pm.getType_id());
-				
-				
+				data[10] = getNameById(TypeMap, pm.getType_id());		
 				data[11] = "Delete";
 				dtm.addRow(data);
 			}
@@ -651,8 +652,10 @@ public class TaskView extends JFrame {
 	}
 	
 	public static String getNameById1(Map<String, String> map, String id) {
+		System.out.println(id);
 	    for (Map.Entry<String, String> entry : map.entrySet()) {
-	        if (entry.getValue() == id) {
+	    	System.out.println(entry.getValue());
+	        if (entry.getValue().equals(id)) {
 	            return entry.getKey();
 	        }
 	    }

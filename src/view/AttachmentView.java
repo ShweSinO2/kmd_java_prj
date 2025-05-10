@@ -270,15 +270,12 @@ public class AttachmentView extends JFrame {
 	            label.setPreferredSize(new Dimension(30, 15));
 //	            label.setBackground(new Color(230, 100, 0));
 	            label.setBackground(new Color(255, 255, 255));
-          	  	label.setForeground(new Color(230, 100, 0));
+          	  	label.setForeground(new Color(40, 167, 69));
           	  	label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	            
 	            //download design
 	            if(buttonText == "Delete") {
-		            label.setBackground(new Color(220, 53, 69));
-		            label.setForeground(Color.WHITE);
-	                label.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-//	                label.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+			        label.setForeground(new Color(220, 53, 69));
 	            }
 	            
 	            label.setFont(new Font("Arial", Font.BOLD, 12));
@@ -288,33 +285,6 @@ public class AttachmentView extends JFrame {
 	        }
 	    };
 	}
-	
-//	private DefaultTableCellRenderer createButtonCellRenderer(final String buttonText) {
-//	    return new DefaultTableCellRenderer() {
-//	        @Override
-//	        public Component getTableCellRendererComponent(JTable table, Object value,
-//	                boolean isSelected, boolean hasFocus, int row, int column) {
-//	            // Default rendering
-//	            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-//	            setHorizontalAlignment(SwingConstants.CENTER);
-//
-//	            // Only style the text (label), not the whole cell
-//	            JLabel label = (JLabel) c;
-//	            label.setText(buttonText); // Set the button text
-//
-//	            // Apply background color, padding, and border-radius effect to the label only
-//	            label.setBackground(new Color(230, 100, 0)); // Background color
-//	            label.setForeground(Color.WHITE); // Text color
-//	            label.setFont(new Font("Arial", Font.BOLD, 12)); // Text style
-//	            label.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15)); // Padding
-//	            label.setOpaque(true); // Make the label opaque to display the background color
-//
-//	            // Set rounded corners by using a border
-//	            label.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-//	            return label;
-//	        }
-//	    };
-//	}
 	
 	private DefaultTableCellRenderer createHeaderRenderer() {
 	    return new DefaultTableCellRenderer() {
@@ -326,7 +296,7 @@ public class AttachmentView extends JFrame {
 	            c.setForeground(Color.WHITE);
 	            setHorizontalAlignment(SwingConstants.CENTER);
 	            setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.GRAY));
-	            setFont(new Font("Arial", Font.BOLD, 12));
+	            setFont(new Font("Arial", Font.BOLD, 14));
 	            return c;
 	        }
 	    };
@@ -404,13 +374,6 @@ public class AttachmentView extends JFrame {
 	        JOptionPane.showMessageDialog(this, "Please select related type and name.");
 	        return;
 	    }
-
-//	    int relatedId = -1;
-//	    if ("Project".equals(selectedType)) {
-//	        relatedId = dataMap.get(selectedName);
-//	    } else if ("Task".equals(selectedType)) {
-//	        relatedId = dataMap.get(selectedName);
-//	    }
 	    
 	    int relatedId = dataMap.get(selectedName);
 
@@ -460,83 +423,6 @@ public class AttachmentView extends JFrame {
 	        JOptionPane.showMessageDialog(this, "Error saving file.");
 	    }
 	}
-
-
-//	private void uploadFile() {
-//		JFileChooser chooser = new JFileChooser();
-//		int option = chooser.showOpenDialog(this);
-//
-//		if (option == JFileChooser.APPROVE_OPTION) {
-//			File selectedFile = chooser.getSelectedFile();
-//			String originalName = selectedFile.getName();
-//			
-//			// Set label to show selected file name
-//			lblSelectedFile.setText(originalName);
-//
-//			File destDir = new File("upload_dir");
-//			if (!destDir.exists())
-//				destDir.mkdir();
-//
-//			// Timestamp and get file extension
-//			String timestamp = String.valueOf(System.currentTimeMillis());
-//			String ext = "";
-//
-//			int i = selectedFile.getName().lastIndexOf('.');
-//			if (i > 0) {
-//				ext = selectedFile.getName().substring(i); // includes the dot
-//			}
-//			
-//			String selectedType = (String) cboRelatedType.getSelectedItem();
-//			String selectedName = (String) cboRelatedName.getSelectedItem();
-//			int relatedId = taskMap.get(selectedName);
-//			System.out.println("--------"+ relatedId);
-////			pm.setStatus_id(statusId);
-//
-//			try {
-//				// Insert a blank row to get generated attachment_id
-//				PreparedStatement ps = (PreparedStatement) con.prepareStatement(
-//						"insert into pj_management.attachment (filename,temp_filename,filepath,employee_id,uploaded_date,related_entity_type,related_entity_id) values(?,?,?,?,?,?,?)",
-//						Statement.RETURN_GENERATED_KEYS);
-//				ps.setString(1, originalName);
-//				ps.setString(2, "");
-//				ps.setString(3, "");
-//				ps.setString(4, "E-000001");
-//				ps.setString(5, new SimpleDateFormat("yyyy-MM-dd").format(new Date())); 
-//				ps.setString(6, selectedType);
-//				ps.setInt(7, relatedId);
-//				ps.executeUpdate();
-//
-//				ResultSet rs = ps.getGeneratedKeys();
-//				int attachmentId = -1;
-//				if (rs.next()) {
-//					attachmentId = rs.getInt(1);
-//				}
-//				System.out.println("Attachment_id");
-//				System.out.println(attachmentId);
-//
-//				// Build new filename
-//				String newFilename = "attachment_" + attachmentId + "_" + timestamp + ext;
-//				File destFile = new File(destDir, newFilename);
-//
-//				// Copy file
-//				Files.copy(selectedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//
-//				// Update DB with actual filename and path
-//				String updateSQL = "UPDATE pj_management.attachment SET temp_filename = ?, filepath = ? WHERE attachment_id = ?";
-//				PreparedStatement psUpdate = con.prepareStatement(updateSQL);
-//				psUpdate.setString(1, newFilename);
-//				psUpdate.setString(2, destFile.getAbsolutePath());
-//				psUpdate.setInt(3, attachmentId);
-//				psUpdate.executeUpdate();
-//
-//				JOptionPane.showMessageDialog(this, "File uploaded successfully.");
-//				showList();
-//
-//			} catch (IOException | SQLException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
 
 	private void downloadFile(int attachment_id) {
 		AttachmentModel am = new AttachmentModel();

@@ -84,7 +84,6 @@ public class TeamView extends JFrame {
 
 				btnSave.setEnabled(false);
 				btnUpdate.setEnabled(true);
-				btnDelete.setEnabled(true);
 				txtTeamName.requestFocus();
 				txtTeamName.selectAll();
 				if (column == 2) {
@@ -295,13 +294,7 @@ public class TeamView extends JFrame {
 	public void clear() {
 		btnSave.setEnabled(true);
 		btnUpdate.setEnabled(false);
-		btnDelete.setEnabled(false);
 		txtTeamName.setText("");
-		
-//		txtName.setText("");
-		
-		
-
 		txtTeamName.requestFocus(true);
 	}
 

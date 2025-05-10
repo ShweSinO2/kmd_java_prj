@@ -63,7 +63,6 @@ public class ProjectController {
 			ps.setInt(7, dain.getClient_id());
 			ps.setInt(8, dain.getProject_id());
 
-			System.out.println(ps);
 			result = ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

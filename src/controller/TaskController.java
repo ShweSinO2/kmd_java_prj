@@ -121,12 +121,36 @@ public class TaskController {
 			pm.setEnd_date(rs.getString("end_date"));
 			pm.setStatus_id(rs.getInt("status_id"));
 			pm.setMilestone_id(rs.getInt("milestone_id"));
-			pm.setAssigned_id(rs.getString("assigned_by_id "));
+			pm.setAssigned_id(rs.getString("assigned_by_id"));
 			pm.setPriority_id(rs.getInt("priority_id"));
 			pm.setType_id(rs.getInt("type_id"));
 			list.add(pm);
 		}
 		return list;
+	}
+	
+	public String returnPjName(int milestoneId)
+	{
+		String sql = "select * from project j join milestone m on j.project_id = m.project_id where m.milestone_id=?";
+		String name = null;
+		try {
+		        PreparedStatement ps = con.prepareStatement(sql);
+		        ps.setInt(1, milestoneId);
+		        ResultSet rs = ps.executeQuery();
+//		        comboBox.removeAllItems();
+//		        comboBox.addItem("-Select-");
+//		        dataMap.clear();
+		        
+		        while (rs.next()) {
+		             name = rs.getString("j.project_name");
+		            
+
+		        }
+		        
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		return name;
 	}
 
 	public static void main(String[] args) {

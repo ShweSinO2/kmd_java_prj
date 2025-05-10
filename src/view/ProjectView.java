@@ -4,8 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import com.toedter.calendar.JDateChooser;
 
@@ -14,6 +16,8 @@ import controller.ProjectController;
 import model.ProjectModel;
 
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,7 +35,6 @@ public class ProjectView extends JFrame {
 	private JTable tblProject;
 	private JButton btnSave;
 	private JButton btnUpdate;
-	private JButton btnDelete;
 	private JButton btnClear;
 	private JTextField txtProjectName;
 	private JDateChooser startDate;
@@ -71,7 +74,8 @@ public class ProjectView extends JFrame {
 
 		JPanel formPanel = new JPanel();
 		formPanel.setBounds(10, 0, 661, 293);
-		formPanel.setBorder(new LineBorder(Color.GREEN, 4, true));
+		formPanel.setBackground(new Color(255, 255, 255));
+		
 		JLabel lblProjectName = new JLabel("Name:");
 		lblProjectName.setBounds(10, 11, 80, 30);
 		txtProjectName = new JTextField();
@@ -117,7 +121,6 @@ public class ProjectView extends JFrame {
 
 					btnSave.setEnabled(false);
 					btnUpdate.setEnabled(true);
-					btnDelete.setEnabled(true);
 					txtProjectName.requestFocus();
 //				}
 				
@@ -151,6 +154,7 @@ public class ProjectView extends JFrame {
 		});
 		JScrollPane tableScrollPane = new JScrollPane(tblProject);
 		tableScrollPane.setBounds(23, 322, 661, 542);
+		tableScrollPane.getViewport().setBackground(new Color(255, 255, 255));
 		rightPanel.setLayout(null);
 
 		// Add to right panel
@@ -268,7 +272,7 @@ public class ProjectView extends JFrame {
 				}
 			}
 		});
-		btnSave.setBounds(35, 219, 89, 30);
+		btnSave.setBounds(20, 219, 89, 30);
 		formPanel.add(btnSave);
 
 		btnUpdate = new JButton("Update");
@@ -316,7 +320,7 @@ public class ProjectView extends JFrame {
 				
 				try {
 					if(pc.isduplicate(pm)) {
-						JOptionPane.showMessageDialog(null, "There is a same supplier name!","Fail", JOptionPane.ERROR_MESSAGE);	
+						JOptionPane.showMessageDialog(null, "There is a same project name!","Fail", JOptionPane.ERROR_MESSAGE);	
 						txtProjectName.requestFocus(true);
 //						txtCustomerName.selectAll();
 					}else {
@@ -403,12 +407,8 @@ public class ProjectView extends JFrame {
 //				}
 			}
 		});
-		btnUpdate.setBounds(158, 219, 89, 30);
+		btnUpdate.setBounds(141, 219, 89, 30);
 		formPanel.add(btnUpdate);
-
-		btnDelete = new JButton("Delete");
-		btnDelete.setBounds(280, 219, 89, 30);
-		formPanel.add(btnDelete);
 
 		btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
@@ -417,15 +417,38 @@ public class ProjectView extends JFrame {
 				txtProjectName.requestFocus(true);
 			}
 		});
-		btnClear.setBounds(411, 219, 89, 30);
+		btnClear.setBounds(259, 219, 89, 30);
 		formPanel.add(btnClear);
 		rightPanel.add(tableScrollPane);
+		
+		rightPanel.addComponentListener(new ComponentAdapter() {
+		    @Override
+		    public void componentResized(ComponentEvent e) {
+		    	int padding = 16;
+		    	int formHeight = 280;
+		    	int formMarginBottom = 16;
+		    	
+		        int width = rightPanel.getWidth();
+		        int height = rightPanel.getHeight();
+
+		        int innerWidth = width - (padding * 2);
+		        int innerHeight = height - (padding * 2);
+
+		        int tableY = padding + formHeight + formMarginBottom;
+		        int tableHeight = innerHeight - formHeight - formMarginBottom;
+
+		        formPanel.setBounds(padding, padding, innerWidth, formHeight);
+		        tableScrollPane.setBounds(padding, tableY, innerWidth, 500);
+		    }
+		});
 
 		// Add right panel to main frame
 		getContentPane().add(rightPanel, BorderLayout.CENTER);
 		
 		createTable();
 		showList();
+		
+		btnUpdate.setEnabled(false);
 
 	}
 	
@@ -446,8 +469,9 @@ public class ProjectView extends JFrame {
 	     dtm.addColumn("Status");
 	     dtm.addColumn("Team");
 	     dtm.addColumn("Client");
-	     dtm.addColumn("Action");
+	     dtm.addColumn("");
 	     tblProject.setModel(dtm);
+	     tblProject.setRowHeight(25);
 	     setColumnWidth(0,60);
 	     setColumnWidth(1,60);
 	     setColumnWidth(2,150);
@@ -458,12 +482,71 @@ public class ProjectView extends JFrame {
 	     setColumnWidth(7,100);
 	     setColumnWidth(8,100);
 	     
+	  // Customize table header
+		    JTableHeader header = tblProject.getTableHeader();
+		    header.setPreferredSize(new Dimension(header.getWidth(), 30)); // Set header height
+		    
+		    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER); // Center alignment
+		    
+		 // Apply center alignment to specific columns
+		    tblProject.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+		    tblProject.getColumnModel().getColumn(8).setCellRenderer(createButtonCellRenderer("Delete"));
+		    
+		    // Set custom header renderer
+		    DefaultTableCellRenderer headerRenderer = createHeaderRenderer();
+		    
+		    // Apply header renderer to all columns
+		    for (int i = 0; i < tblProject.getColumnModel().getColumnCount(); i++) {
+		        tblProject.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+		    }
+	     
     }
+    
+    private DefaultTableCellRenderer createButtonCellRenderer(final String buttonText) {
+	    return new DefaultTableCellRenderer() {
+	        @Override
+	        public Component getTableCellRendererComponent(JTable table, Object value,
+	                boolean isSelected, boolean hasFocus, int row, int column) {
+	        	
+	            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	            setHorizontalAlignment(SwingConstants.CENTER);
+
+	            JLabel label = new JLabel(buttonText);
+	            label.setHorizontalAlignment(SwingConstants.CENTER); // Center text
+	            
+	            // Style the label like a button
+	            label.setPreferredSize(new Dimension(30, 15));
+	            label.setBackground(new Color(255, 255, 255));
+          	  	label.setForeground(new Color(220, 53, 69));
+          	  	label.setCursor(new Cursor(Cursor.HAND_CURSOR));            
+	            label.setFont(new Font("Arial", Font.BOLD, 12));
+	            label.setOpaque(true);
+
+	            return label;
+	        }
+	    };
+	}
+    
+    private DefaultTableCellRenderer createHeaderRenderer() {
+	    return new DefaultTableCellRenderer() {
+	        @Override
+	        public Component getTableCellRendererComponent(JTable table, Object value,
+	                boolean isSelected, boolean hasFocus, int row, int column) {
+	            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	            c.setBackground(new Color(230, 100, 0));
+	            c.setForeground(Color.WHITE);
+	            setHorizontalAlignment(SwingConstants.CENTER);
+	            setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.GRAY));
+	            setFont(new Font("Arial", Font.BOLD, 14));
+	            return c;
+	        }
+	    };
+	}
 
 	public void clear() {
 		btnSave.setEnabled(true);
 		btnUpdate.setEnabled(false);
-		btnDelete.setEnabled(false);
 		txtProjectName.setText("");
 		txtDescription.setText("");
 		startDate.setDate(null);
@@ -471,7 +554,6 @@ public class ProjectView extends JFrame {
 		cboStatus.setSelectedIndex(0);
 		cboTeam.setSelectedIndex(0);
 		cboClient.setSelectedIndex(0);
-
 		txtProjectName.requestFocus(true);
 	}
 

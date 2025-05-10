@@ -34,6 +34,8 @@ public class SideMenuPanel extends JPanel {
 		// Add menu buttons with spacing
 		addButton("Project", "ProjectView");
 		addSpacer();
+		addButton("MileStone", "MilestoneView");
+		addSpacer();
 		addButton("Task", "TaskView");
 		addSpacer();
 		addButton("Attachment", "AttachmentView");
@@ -127,8 +129,11 @@ public class SideMenuPanel extends JPanel {
 			case "ProjectView":
 				frameToOpen = new ProjectView();
 				break;
+			case "MilestoneView":
+				 frameToOpen = new MilestoneView();
+				break;
 			case "TaskView":
-				// frameToOpen = new TaskView();
+				 frameToOpen = new TaskView();
 				break;
 			case "AttachmentView":
 				frameToOpen = new AttachmentView();
@@ -146,7 +151,7 @@ public class SideMenuPanel extends JPanel {
 				frameToOpen = new TeamMember();
 				break;
 			case "NotificationView":
-				// frameToOpen = new NotificationView();
+				 frameToOpen = new NotificationView();
 				break;
 			default:
 				JOptionPane.showMessageDialog(null, "Unknown view: " + viewName);
