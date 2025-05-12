@@ -118,19 +118,19 @@ public class LoginView extends JFrame{
 		innerPanel.add(toggleBtn);
 
 		// Toggle show/hide password
-		toggleBtn.addActionListener(new ActionListener() {
-		    private boolean showing = false;
-
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        if (showing) {
-		            txtPassword.setEchoChar('•'); // hide
-		        } else {
-		            txtPassword.setEchoChar((char) 0); // show
-		        }
-		        showing = !showing;
-		    }
-		});
+//		toggleBtn.addActionListener(new ActionListener() {
+//		    private boolean showing = false;
+//
+//		    @Override
+//		    public void actionPerformed(ActionEvent e) {
+//		        if (showing) {
+//		            txtPassword.setEchoChar('•'); // hide
+//		        } else {
+//		            txtPassword.setEchoChar((char) 0); // show
+//		        }
+//		        showing = !showing;
+//		    }
+//		});
 		
 		JButton btnLogin = new JButton("Login");
 		
