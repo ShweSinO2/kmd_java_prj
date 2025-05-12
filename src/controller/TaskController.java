@@ -67,9 +67,9 @@ public class TaskController {
 			ps.setInt(8, dain.getPriority_id());
 			ps.setInt(9, dain.getType_id());
 			ps.setInt(10, dain.getTask_id());
-
-			System.out.println(ps);
+			
 			result = ps.executeUpdate();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -152,6 +152,22 @@ public class TaskController {
 		    }
 		return name;
 	}
+	
+	
+//	public void updateTask(int status_id,int task_id)
+//	{
+//		String sql="update task set status_id=? where task_id=? ";
+//		try { 
+//			 PreparedStatement ps = con.prepareStatement(sql);
+//			 ps.setInt(1,status_id);
+//			 ps.setInt(2,task_id);
+//			
+//		}
+//		catch (SQLException e) {
+//	        e.printStackTrace();
+//	    }
+//		System.out.println("Update successful! ");
+//	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

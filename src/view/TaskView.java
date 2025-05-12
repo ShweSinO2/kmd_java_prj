@@ -119,7 +119,7 @@ public class TaskView extends JFrame {
 
 //				        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					Date end = sdf.parse(EndDateStr);
-					txtStartDate.setDate(end);
+					txtEndDate.setDate(end);
 
 				} catch (ParseException e1) {
 					e1.printStackTrace();
@@ -207,7 +207,7 @@ public class TaskView extends JFrame {
 		lblMilestone.setBounds(20, 161, 80, 14);
 		formPanel.add(lblMilestone);
 
-		JComboBox cboProject = new JComboBox();
+		cboProject = new JComboBox();
 		MySqlQuery.addCoboBox("project", "project_id", "project_name", cboProject, ProjectMap);
 		cboProject.setBounds(101, 110, 200, 30);
 		formPanel.add(cboProject);
@@ -217,7 +217,7 @@ public class TaskView extends JFrame {
 		cboMilestone.setBounds(101, 157, 200, 30);
 		formPanel.add(cboMilestone);
 
-		JComboBox cboAssigned = new JComboBox();
+		cboAssigned = new JComboBox();
 		cboAssigned.setBounds(101, 211, 200, 30);
 		formPanel.add(cboAssigned);
 
@@ -268,12 +268,12 @@ public class TaskView extends JFrame {
 		cboStatus.setBounds(389, 106, 200, 30);
 		formPanel.add(cboStatus);
 
-		JComboBox cboPriority = new JComboBox();
+		cboPriority = new JComboBox();
 		MySqlQuery.addCoboBox("task_priority", "priority_id", "priority_name", cboPriority, PriorityMap);
 		cboPriority.setBounds(389, 161, 200, 30);
 		formPanel.add(cboPriority);
 
-		JComboBox cboType = new JComboBox();
+		cboType = new JComboBox();
 		MySqlQuery.addCoboBox("task_type", "type_id", "type_name", cboType, TypeMap);
 		cboType.setBounds(389, 211, 200, 30);
 		formPanel.add(cboType);
@@ -419,14 +419,15 @@ public class TaskView extends JFrame {
 					String selectedStatus = (String) cboStatus.getSelectedItem();
 					int statusId = StatusMap.get(selectedStatus);
 					pm.setStatus_id(statusId);
+//					pc.updateTask(statusId,Task_id);
 
 					String selectedPriority = (String) cboPriority.getSelectedItem();
 					int priorityId = PriorityMap.get(selectedPriority);
 					pm.setPriority_id(priorityId);
 
-					String selectedType = (String) cboProject.getSelectedItem();
+					String selectedType = (String) cboType.getSelectedItem();
 					int typeId = TypeMap.get(selectedType);
-					pm.setType_id(projectId);
+					pm.setType_id(typeId);
 
 					if (Checking.IsValidName(pm.getTask_name())) {
 						JOptionPane.showMessageDialog(null, "Invlaid name field", "Invlaid", JOptionPane.ERROR_MESSAGE);
@@ -441,24 +442,18 @@ public class TaskView extends JFrame {
 
 					else {
 
-						try {
-							if (pc.isduplicate(pm)) {
-								JOptionPane.showMessageDialog(null, "There is a same supplier name!", "Fail",
-										JOptionPane.ERROR_MESSAGE);
-								txtTaskName.requestFocus(true);
-//						txtCustomerName.selectAll();
-							} else {
+						try {							
 								int rs = pc.update(pm);
+								System.out.println(rs);
 								if (rs == 1) {
 									JOptionPane.showMessageDialog(null, "Update Successfully", "Successfully",
 											JOptionPane.INFORMATION_MESSAGE);
-//							AutoID();
 									clear();
 									showList();
-								}
-
 							}
-						} catch (HeadlessException | SQLException e1) {
+
+							
+						} catch (HeadlessException e1) {
 //					// TODO Auto-generated catch block
 							e1.printStackTrace();
 
@@ -668,7 +663,7 @@ public class TaskView extends JFrame {
 				MySqlQuery.getComboData2("employee", "employee_id", "name", AssignedMap);
 				MySqlQuery.getComboData("milestone", "milestone_id", "milestone_name", MilestoneMap);
 
-				data[0] = Integer.toString(pm.getMilestone_id());
+				data[0] = Integer.toString(pm.getTask_id());
 				;
 				data[1] = pm.getTask_name();
 				data[2] = pm.getDescription();
