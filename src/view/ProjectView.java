@@ -28,6 +28,8 @@ import java.util.Map;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ProjectView extends JFrame {
 	DefaultTableModel dtm = new DefaultTableModel();
@@ -296,15 +298,6 @@ public class ProjectView extends JFrame {
 
 				String formattedEndDate = sdf.format(endDate.getDate());
 				pm.setEnd_date(formattedEndDate);
-
-//				int statusId = Integer.parseInt(cboStatus.getSelectedItem().toString());
-//				pm.setStatus_id(statusId);
-
-//				int teamId = Integer.parseInt(cboTeam.getSelectedItem().toString());
-//				pm.setTeam_id(statusId);
-//
-//				int clientId = Integer.parseInt(cboClient.getSelectedItem().toString());
-//				pm.setClient_id(statusId);
 				
 				String selectedStatus = (String) cboStatus.getSelectedItem();
 				int statusId = statusMap.get(selectedStatus);
@@ -322,12 +315,10 @@ public class ProjectView extends JFrame {
 					if(pc.isduplicate(pm)) {
 						JOptionPane.showMessageDialog(null, "There is a same project name!","Fail", JOptionPane.ERROR_MESSAGE);	
 						txtProjectName.requestFocus(true);
-//						txtCustomerName.selectAll();
 					}else {
 						int rs = pc.update(pm);
 						if(rs==1) {
 							JOptionPane.showMessageDialog(null, "Update Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
-//							AutoID();
 							clear();
 							showList();
 						}
@@ -438,7 +429,7 @@ public class ProjectView extends JFrame {
 		        int tableHeight = innerHeight - formHeight - formMarginBottom;
 
 		        formPanel.setBounds(padding, padding, innerWidth, formHeight);
-		        tableScrollPane.setBounds(padding, tableY, innerWidth, 500);
+		        tableScrollPane.setBounds(padding, tableY, innerWidth, 380);
 		    }
 		});
 
@@ -449,6 +440,23 @@ public class ProjectView extends JFrame {
 		showList();
 		
 		btnUpdate.setEnabled(false);
+		
+		JButton btnCsvexport = new JButton("ExportToCSV");
+		btnCsvexport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ProjectController pc = new ProjectController();
+				List<ProjectModel> projectList;
+				try {
+					projectList = pc.selectall();
+					exportToCSV(projectList);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnCsvexport.setBounds(377, 219, 124, 30);
+		formPanel.add(btnCsvexport);
 
 	}
 	
@@ -579,6 +587,49 @@ public class ProjectView extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void exportToCSV(List<ProjectModel> projectList) {
+		MySqlQuery.getComboData("status", "status_id", "status_name", statusMap);
+		MySqlQuery.getComboData("team", "team_id", "team_name", teamMap);
+		MySqlQuery.getComboData("client", "client_id", "name", clientMap);
+		
+		String userHome = System.getProperty("user.home");
+		String timestamp = String.valueOf(System.currentTimeMillis());
+		String downloadsPath = userHome + "\\Downloads\\" + timestamp +"_projects.csv";
+
+		try (FileWriter writer = new FileWriter(downloadsPath)) {
+			// Write CSV header
+			writer.append("ProjectID,ProjectName,Description,StartDate,EndDate,StatusName,TeamName,ClientName\n");
+
+			// Write project data
+			for (ProjectModel pm : projectList) {
+				writer.append(String.valueOf(pm.getProject_id())).append(",");
+				writer.append(escapeCsv(pm.getProject_name())).append(",");
+				writer.append(escapeCsv(pm.getDescription())).append(",");
+				writer.append(pm.getStart_date()).append(",");
+				writer.append(pm.getEnd_date()).append(",");
+				writer.append(String.valueOf(getNameById(statusMap, pm.getStatus_id()))).append(",");
+				writer.append(String.valueOf(getNameById(teamMap, pm.getTeam_id()))).append(",");
+				writer.append(String.valueOf(getNameById(clientMap, pm.getClient_id()))).append("\n");
+			}
+
+			 JOptionPane.showMessageDialog(null, "CSV Export Successful!",
+		                "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// Helper method to handle commas and quotes in CSV
+	private String escapeCsv(String value) {
+		if (value == null)
+			return "";
+		if (value.contains(",") || value.contains("\"")) {
+			value = value.replace("\"", "\"\"");
+			return "\"" + value + "\"";
+		}
+		return value;
 	}
 	
 	//get id from database and show name by Id

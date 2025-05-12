@@ -23,7 +23,7 @@ public class SideMenuPanel extends JPanel {
 
 		JLabel lblTitle = new JLabel("<html><div style='text-align:center;'>"
 				+ "<span style='font-size:20px; font-weight:bold; " + "color:#FF6F00; text-shadow: 2px 2px #4E342E;'>"
-				+ "Project Management<br>System</span></div></html>");
+				+ "Project Task Management<br>System</span></div></html>");
 
 		lblTitle.setForeground(new Color(255, 255, 255));
 		lblTitle.setAlignmentY(Component.LEFT_ALIGNMENT);

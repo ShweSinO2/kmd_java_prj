@@ -42,6 +42,9 @@ public class TeamMember extends JFrame {
 	private JButton btnUpdate;
 	private JButton btnClear;
 	private String employeeName;
+	private JComboBox<String> cboEmployee;
+	private JComboBox cboTeam;
+	private JComboBox cboPosition;
 	Map<String, Integer> teamMap = new HashMap<>();
 	Map<String, String> employeeMap = new HashMap<>();
 
@@ -82,12 +85,12 @@ public class TeamMember extends JFrame {
 		lblTeamName.setBounds(29, 32, 82, 14);
 		formPanel.add(lblTeamName);
 		
-		JComboBox cboTeam = new JComboBox();
+		cboTeam = new JComboBox();
 		cboTeam.setBounds(121, 24, 120, 31);
 		MySqlQuery.addCoboBox("team", "team_id", "team_name", cboTeam, teamMap);
 		formPanel.add(cboTeam);
 		
-		JComboBox<String> cboEmployee = new JComboBox<>();
+		cboEmployee = new JComboBox<>();
 		cboEmployee.setBounds(411, 24, 120, 31);
 		MySqlQuery.addCoboBoxEmployee("employee", "employee_id", "name", cboEmployee, employeeMap);
 		formPanel.add(cboEmployee);
@@ -122,7 +125,7 @@ public class TeamMember extends JFrame {
 		lblNewLabel_1.setBounds(570, 32, 46, 14);
 		formPanel.add(lblNewLabel_1);
 		
-		JComboBox cboPosition = new JComboBox();
+		cboPosition = new JComboBox();
 		cboPosition.setModel(new DefaultComboBoxModel(new String[] {"-Select-", "Project Leader", "Member"}));
 		cboPosition.setBounds(626, 24, 120, 31);
 		formPanel.add(cboPosition);
@@ -161,10 +164,9 @@ public class TeamMember extends JFrame {
 								
 								JOptionPane.showMessageDialog(null,"Delete Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
 								showList();
-//								clear();
+								clear();
 								
 							}else {
-								System.out.println(rs);
 								JOptionPane.showMessageDialog(null,"Delete fails");
 							}
 						}
@@ -256,6 +258,11 @@ public class TeamMember extends JFrame {
 		formPanel.add(btnUpdate);
 		
 		btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
 		btnClear.setBounds(281, 85, 89, 23);
 		formPanel.add(btnClear);
 		
@@ -283,12 +290,15 @@ public class TeamMember extends JFrame {
 		        int tableHeight = innerHeight - formHeight - formMarginBottom;
 
 		        formPanel.setBounds(padding, padding, innerWidth, formHeight);
-		        tableScrollPane.setBounds(padding, tableY, innerWidth, 500);
+		        tableScrollPane.setBounds(padding, tableY, innerWidth, 510);
 		    }
 		});
 		
 		createTable();
 		showList();
+		
+		btnUpdate.setEnabled(false);
+		
 		getContentPane().add(rightPanel, BorderLayout.CENTER);
 	}
 	
@@ -426,5 +436,13 @@ public class TeamMember extends JFrame {
 	        }
 	    }
 	    return null;
+	}
+	
+	public void clear() {
+		btnSave.setEnabled(true);
+		btnUpdate.setEnabled(false);
+		cboEmployee.setSelectedIndex(0);
+		cboTeam.setSelectedIndex(0);
+		cboPosition.setSelectedIndex(0);
 	}
 }

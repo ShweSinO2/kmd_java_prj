@@ -33,7 +33,9 @@ import javax.swing.table.TableColumn;
 import config.DBConfig;
 import config.MySqlQuery;
 import controller.AttachmentController;
+import controller.ProjectController;
 import model.AttachmentModel;
+import model.ProjectModel;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -45,6 +47,8 @@ import java.awt.event.ActionEvent;
 public class AttachmentView extends JFrame {
 	DefaultTableModel dtm = new DefaultTableModel();
 	private JButton uploadBtn;
+	private JButton btnSave;
+	private JButton btnUpdate;
 	private JTable tblAttachment;
 	private String Attachment_id = null;
 	private JLabel lblSelectedFile;
@@ -89,6 +93,7 @@ public class AttachmentView extends JFrame {
 
 		uploadBtn = new JButton("Upload File");
 		uploadBtn.setBounds(72, 20, 120, 30);
+		uploadBtn.addActionListener(e -> uploadFile());
 		formPanel.add(uploadBtn);
 		
 		// Label to show selected file name
@@ -105,19 +110,50 @@ public class AttachmentView extends JFrame {
 				
 				int row = tblAttachment.rowAtPoint(e.getPoint());
 				int column = tblAttachment.columnAtPoint(e.getPoint());
+				
+				Attachment_id = (String)tblAttachment.getValueAt(row, 0);
+				
+				lblSelectedFile.setText((String) tblAttachment.getValueAt(row, 1));
+			    String relatedType = (String) tblAttachment.getValueAt(row, 3);
+				cboRelatedType.setSelectedItem(relatedType);
+				
+				String relatedName = (String) tblAttachment.getValueAt(row, 2);
+				cboRelatedName.setSelectedItem(relatedName);
 
-				Attachment_id = (String) tblAttachment.getValueAt(row, 0);
 				am.setAttachment_id(Integer.parseInt(Attachment_id));
 				am.setFilename((String) tblAttachment.getValueAt(row, 1));
 				
+				DefaultTableModel model = (DefaultTableModel) tblAttachment.getModel();
+                String attachmentIdStr = (String) model.getValueAt(row, 0);
+                int attachmentId = Integer.parseInt(attachmentIdStr);
+				btnSave.setEnabled(false);
+				btnUpdate.setEnabled(true);
+				
 				//download for attachment
-				if(column == 4) {
-					DefaultTableModel model = (DefaultTableModel) tblAttachment.getModel();
-	                String attachmentIdStr = (String) model.getValueAt(row, 0);
-	                int attachmentId = Integer.parseInt(attachmentIdStr);
-	                
+				if(column == 4) {	                
 	                downloadFile(attachmentId);
+	                clear();
 				}
+				
+				//delete row for attachment
+		        if (column == 5) {
+	                try {	                	
+	                	if(JOptionPane.showConfirmDialog(null,"Are you sure you want to delete?","Confrim",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION) {
+	                		AttachmentController ac = new AttachmentController();
+							int rs = ac.delete(am);
+							if(rs==1) {
+								JOptionPane.showMessageDialog(null,"Delete Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
+								showList();
+								clear();
+							}else {
+								JOptionPane.showMessageDialog(null,"Delete fails");
+							}
+						}
+	                } catch (Exception ex) {
+	                    ex.printStackTrace();
+	                    JOptionPane.showMessageDialog(null, "Error while deleting: " + ex.getMessage());
+	                }
+		        }
 			}
 		});
 		
@@ -165,17 +201,23 @@ public class AttachmentView extends JFrame {
 		    }
 		});
 
-		JButton btnSave = new JButton("Save");
+		btnSave = new JButton("Save");
 		btnSave.addActionListener(e -> saveFile());
-		btnSave.setBounds(22, 90, 89, 23);
+		btnSave.setBounds(22, 102, 89, 23);
 		formPanel.add(btnSave);
 
-		JButton btnUpdate = new JButton("Update");
-		btnUpdate.setBounds(148, 90, 89, 23);
+		btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(e -> update(Integer.parseInt(Attachment_id)));
+		btnUpdate.setBounds(148, 102, 89, 23);
 		formPanel.add(btnUpdate);
 
 		JButton btnClear = new JButton("Clear");
-		btnClear.setBounds(274, 90, 89, 23);
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
+		btnClear.setBounds(274, 102, 89, 23);
 		formPanel.add(btnClear);
 
 		rightPanel.add(tableScrollPane);
@@ -185,7 +227,7 @@ public class AttachmentView extends JFrame {
 		    @Override
 		    public void componentResized(ComponentEvent e) {
 		    	int padding = 16;
-		    	int formHeight = 150;
+		    	int formHeight = 170;
 		    	int formMarginBottom = 16;
 		    	
 		        int width = rightPanel.getWidth();
@@ -198,7 +240,7 @@ public class AttachmentView extends JFrame {
 		        int tableHeight = innerHeight - formHeight - formMarginBottom;
 
 		        formPanel.setBounds(padding, padding, innerWidth, formHeight);
-		        tableScrollPane.setBounds(padding, tableY, innerWidth, 500);
+		        tableScrollPane.setBounds(padding, tableY, innerWidth, 490);
 		    }
 		});
 		
@@ -207,8 +249,8 @@ public class AttachmentView extends JFrame {
 
 		createTable();
 		showList();
-
-		uploadBtn.addActionListener(e -> uploadFile());
+		
+		btnUpdate.setEnabled(false);
 	}
 
 	public void setColumnWidth(int index, int width) {
@@ -240,7 +282,7 @@ public class AttachmentView extends JFrame {
 	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 	    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER); // Center alignment
 	    
-	 // Apply center alignment to specific columns
+	    // Apply center alignment to specific columns
 	    tblAttachment.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 	    tblAttachment.getColumnModel().getColumn(4).setCellRenderer(createButtonCellRenderer("Download"));
 	    tblAttachment.getColumnModel().getColumn(5).setCellRenderer(createButtonCellRenderer("Delete"));
@@ -268,7 +310,6 @@ public class AttachmentView extends JFrame {
 	            
 	            // Style the label like a button
 	            label.setPreferredSize(new Dimension(30, 15));
-//	            label.setBackground(new Color(230, 100, 0));
 	            label.setBackground(new Color(255, 255, 255));
           	  	label.setForeground(new Color(40, 167, 69));
           	  	label.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -300,6 +341,13 @@ public class AttachmentView extends JFrame {
 	            return c;
 	        }
 	    };
+	}
+	
+	public void clear() {
+		btnSave.setEnabled(true);
+		btnUpdate.setEnabled(false);
+		cboRelatedType.setSelectedIndex(0);
+		lblSelectedFile.setText("No file selected");
 	}
 
 	public void showList() {
@@ -412,6 +460,7 @@ public class AttachmentView extends JFrame {
 	        psUpdate.executeUpdate();
 
 	        JOptionPane.showMessageDialog(this, "File saved successfully.");
+	        clear();
 	        showList();
 
 	        // Reset
@@ -447,6 +496,82 @@ public class AttachmentView extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	private void update(int attachmentId) {
+	    String selectedType = (String) cboRelatedType.getSelectedItem();
+	    String selectedName = (String) cboRelatedName.getSelectedItem();
+	    
+	    if (selectedType == null || selectedName == null) {
+	        JOptionPane.showMessageDialog(this, "Please select related type and name.");
+	        return;
+	    }
+	    
+	    int relatedId = dataMap.get(selectedName);
+
+	    File destDir = new File("upload_dir");
+	    if (!destDir.exists()) destDir.mkdir();
+
+	    try {
+	        // Get old temp_filename from DB
+	        String temp_filename = null;
+	        String filename = null;
+	        String filepath = null;
+	        File destFile;
+	        PreparedStatement psSelect = con.prepareStatement("SELECT * FROM pj_management.attachment WHERE attachment_id = ?");
+	        psSelect.setInt(1, attachmentId);
+	        ResultSet rs = psSelect.executeQuery();
+	        if (rs.next()) {
+	        	filename = rs.getString("filename");
+	        	filepath = rs.getString("filepath");
+	        	temp_filename = rs.getString("temp_filename");
+	        }
+	        rs.close();
+	        psSelect.close();
+
+	        if(!lblSelectedFile.getText().equals(filename)) {
+		        // Delete old file if exists
+		        if (temp_filename != null) {
+		            File oldFile = new File("upload_dir/" + temp_filename);
+		            if (oldFile.exists()) {
+		                oldFile.delete(); // Optional: check result for failure
+		            }
+		        }
+
+	        	 // Copy new file
+	        	filename = selectedFile.getName();
+		        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+		        String ext = selectedFile.getName().substring(selectedFile.getName().lastIndexOf("."));
+		        temp_filename = "attachment_" + attachmentId + "_" + timestamp + ext;
+		        destFile = new File(destDir, temp_filename);
+		        Files.copy(selectedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+	        }
+	       
+	        // Update DB with new file info
+	        String sql = "UPDATE pj_management.attachment SET filename=?, temp_filename=?, filepath=?, employee_id=?, related_entity_type=?, related_entity_id=?, uploaded_date=? WHERE attachment_id=?";
+	        PreparedStatement ps = con.prepareStatement(sql);
+	        ps.setString(1, filename);
+	        ps.setString(2, temp_filename);
+	        ps.setString(3, filepath);
+	        ps.setString(4, "E-000001");
+	        ps.setString(5, selectedType);
+	        ps.setInt(6, relatedId);
+	        ps.setString(7, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+	        ps.setInt(8, attachmentId);
+	        ps.executeUpdate();
+
+	        JOptionPane.showMessageDialog(this, "File updated successfully.");
+	        clear();
+	        showList();
+
+	        selectedFile = null;
+	        lblSelectedFile.setText("No file selected");
+
+	    } catch (IOException | SQLException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(this, "Error updating file.");
+	    }
+	}
+
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

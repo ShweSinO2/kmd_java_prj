@@ -4,8 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -21,6 +23,8 @@ import model.ClientModel;
 
 
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -71,6 +75,7 @@ public class ClientView extends JFrame {
 		JPanel rightPanel = new JPanel();
 
 		JPanel formPanel = new JPanel();
+		formPanel.setBackground(new Color(255, 255, 255));
 		formPanel.setBounds(10, 0, 661, 293);
 
 		tblClient = new JTable();
@@ -126,26 +131,27 @@ public class ClientView extends JFrame {
 			
 		JScrollPane tableScrollPane = new JScrollPane(tblClient);
 		tableScrollPane.setBounds(23, 322, 661, 542);
+		tableScrollPane.getViewport().setBackground(new Color(255, 255, 255));
 		rightPanel.setLayout(null);
 
 		// Add to right panel
 		rightPanel.add(formPanel);
 
 		JLabel lblDate = new JLabel("Name");
-		lblDate.setBounds(11, 21, 80, 30);
+		lblDate.setBounds(21, 21, 80, 30);
 		formPanel.setLayout(null);
 		formPanel.add(lblDate);
 
 		JLabel lblNewLabel = new JLabel("Email");
-		lblNewLabel.setBounds(13, 74, 46, 14);
+		lblNewLabel.setBounds(23, 137, 46, 14);
 		formPanel.add(lblNewLabel);
 
 		JLabel lblTeam = new JLabel("Company Address");
-		lblTeam.setBounds(12, 175, 95, 14);
+		lblTeam.setBounds(356, 76, 112, 14);
 		formPanel.add(lblTeam);
 
 		JLabel lblClient = new JLabel("Company Name");
-		lblClient.setBounds(9, 123, 85, 21);
+		lblClient.setBounds(21, 79, 115, 21);
 		formPanel.add(lblClient);
 
 		btnSave = new JButton("Save");
@@ -228,7 +234,7 @@ public class ClientView extends JFrame {
 				}
 			}
 		});
-		btnSave.setBounds(35, 219, 89, 30);
+		btnSave.setBounds(21, 193, 89, 30);
 		formPanel.add(btnSave);
 
 		btnUpdate = new JButton("Update");
@@ -308,7 +314,7 @@ public class ClientView extends JFrame {
 				}
 			}
 		});
-		btnUpdate.setBounds(158, 219, 89, 30);
+		btnUpdate.setBounds(144, 193, 89, 30);
 		formPanel.add(btnUpdate);
 
 		btnClear = new JButton("Clear");
@@ -318,44 +324,69 @@ public class ClientView extends JFrame {
 				txtName.requestFocus(true);
 			}
 		});
-		btnClear.setBounds(295, 219, 89, 30);
+		btnClear.setBounds(267, 193, 89, 30);
 		formPanel.add(btnClear);
 		
 		txtName = new JTextField();
-		txtName.setBounds(116, 21, 200, 30);
+		txtName.setBounds(126, 21, 200, 30);
 		formPanel.add(txtName);
 		txtName.setColumns(10);
 		
 		txtEmail = new JTextField();
 		txtEmail.setColumns(10);
-		txtEmail.setBounds(116, 67, 200, 30);
+		txtEmail.setBounds(126, 130, 200, 30);
 		formPanel.add(txtEmail);
 		
 		txtCompanyName = new JTextField();
 		txtCompanyName.setColumns(10);
-		txtCompanyName.setBounds(116, 118, 200, 30);
+		txtCompanyName.setBounds(128, 74, 200, 30);
 		formPanel.add(txtCompanyName);
 		
 		txtCompanyAddress = new JTextField();
-		txtCompanyAddress.setBounds(117, 169, 200, 30);
+		txtCompanyAddress.setBounds(471, 68, 200, 30);
 		formPanel.add(txtCompanyAddress);
 		
 		JLabel lblPhone = new JLabel("Phone");
-		lblPhone.setBounds(346, 21, 80, 30);
+		lblPhone.setBounds(356, 21, 80, 30);
 		formPanel.add(lblPhone);
 		
 		txtPhone = new JTextField();
 		txtPhone.setColumns(10);
-		txtPhone.setBounds(397, 21, 200, 30);
+		txtPhone.setBounds(471, 21, 200, 30);
 		formPanel.add(txtPhone);
 		
 		rightPanel.add(tableScrollPane);
+		
+		
+		// Update component bounds on resize
+		rightPanel.addComponentListener(new ComponentAdapter() {
+		    @Override
+		    public void componentResized(ComponentEvent e) {
+		    	int padding = 16;
+		    	int formHeight = 250;
+		    	int formMarginBottom = 16;
+		    	
+		        int width = rightPanel.getWidth();
+		        int height = rightPanel.getHeight();
+
+		        int innerWidth = width - (padding * 2);
+		        int innerHeight = height - (padding * 2);
+
+		        int tableY = padding + formHeight + formMarginBottom;
+		        int tableHeight = innerHeight - formHeight - formMarginBottom;
+
+		        formPanel.setBounds(padding, padding, innerWidth, formHeight);
+		        tableScrollPane.setBounds(padding, tableY, innerWidth, 400);
+		    }
+		});
 
 		// Add right panel to main frame
 		getContentPane().add(rightPanel, BorderLayout.CENTER);
 		
 		createTable();
 		showList();
+		
+		btnUpdate.setEnabled(false);
 
 	}
 	
@@ -374,8 +405,9 @@ public class ClientView extends JFrame {
 	     dtm.addColumn("Email");
 	     dtm.addColumn("Company Name");
 	     dtm.addColumn("Company Address");
-	     dtm.addColumn("Action");
+	     dtm.addColumn("");
 	     tblClient.setModel(dtm);
+	     tblClient.setRowHeight(25);
 	     setColumnWidth(0,60);
 	     setColumnWidth(1,60);
 	     setColumnWidth(2,150);
@@ -383,10 +415,72 @@ public class ClientView extends JFrame {
 	     setColumnWidth(4,100);
 	     setColumnWidth(5,100);
 	     
-
-	    
-	     
+	     // Customize table header
+		    JTableHeader header = tblClient.getTableHeader();
+		    header.setPreferredSize(new Dimension(header.getWidth(), 30)); // Set header height
+		    
+		    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		    centerRenderer.setHorizontalAlignment(SwingConstants.CENTER); // Center alignment
+		    
+		    // Apply center alignment to specific columns
+		    tblClient.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+		    tblClient.getColumnModel().getColumn(6).setCellRenderer(createButtonCellRenderer("Delete"));
+		    
+		    // Set custom header renderer
+		    DefaultTableCellRenderer headerRenderer = createHeaderRenderer();
+		    
+		    // Apply header renderer to all columns
+		    for (int i = 0; i < tblClient.getColumnModel().getColumnCount(); i++) {
+		    	tblClient.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+		    }  
     }
+    
+    private DefaultTableCellRenderer createButtonCellRenderer(final String buttonText) {
+	    return new DefaultTableCellRenderer() {
+	        @Override
+	        public Component getTableCellRendererComponent(JTable table, Object value,
+	                boolean isSelected, boolean hasFocus, int row, int column) {
+	        	
+	            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	            setHorizontalAlignment(SwingConstants.CENTER);
+
+	            JLabel label = new JLabel(buttonText);
+	            label.setHorizontalAlignment(SwingConstants.CENTER); // Center text
+	            
+	            // Style the label like a button
+	            label.setPreferredSize(new Dimension(30, 15));
+	            label.setBackground(new Color(255, 255, 255));
+          	  	label.setForeground(new Color(40, 167, 69));
+          	  	label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	            
+	            //download design
+	            if(buttonText == "Delete") {
+			        label.setForeground(new Color(220, 53, 69));
+	            }
+	            
+	            label.setFont(new Font("Arial", Font.BOLD, 12));
+	            label.setOpaque(true);
+
+	            return label;
+	        }
+	    };
+	}
+	
+	private DefaultTableCellRenderer createHeaderRenderer() {
+	    return new DefaultTableCellRenderer() {
+	        @Override
+	        public Component getTableCellRendererComponent(JTable table, Object value,
+	                boolean isSelected, boolean hasFocus, int row, int column) {
+	            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	            c.setBackground(new Color(230, 100, 0));
+	            c.setForeground(Color.WHITE);
+	            setHorizontalAlignment(SwingConstants.CENTER);
+	            setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.GRAY));
+	            setFont(new Font("Arial", Font.BOLD, 14));
+	            return c;
+	        }
+	    };
+	}
 
 	public void clear() {
 		btnSave.setEnabled(true);
