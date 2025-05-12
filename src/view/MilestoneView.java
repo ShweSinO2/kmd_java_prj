@@ -19,6 +19,8 @@ import model.MilestoneModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,6 +46,8 @@ public class MilestoneView extends JFrame {
 	String Project_id = null;
 	Map<String, Integer> statusMap = new HashMap<>();
 	Map<String, Integer> projectMap = new HashMap<>();
+	private JTextField txtShowAll;
+	private JLabel lblSearch;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -74,7 +78,7 @@ public class MilestoneView extends JFrame {
 		JPanel formPanel = new JPanel();
 		formPanel.setBackground(new Color(255, 255, 255));
 		formPanel.setBounds(10, 0, 661, 293);
-		
+
 		JLabel lblProjectName = new JLabel("Name:");
 		lblProjectName.setBounds(20, 11, 80, 30);
 		txtMilestoneName = new JTextField();
@@ -338,36 +342,61 @@ public class MilestoneView extends JFrame {
 		btnClear.setBounds(260, 127, 89, 30);
 		formPanel.add(btnClear);
 		rightPanel.add(tableScrollPane);
-		
+
 		// Update component bounds on resize
-				rightPanel.addComponentListener(new ComponentAdapter() {
-					@Override
-					public void componentResized(ComponentEvent e) {
-						int padding = 16;
-						int formHeight = 200;
-						int formMarginBottom = 16;
+		rightPanel.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				int padding = 16;
+				int formHeight = 200;
+				int formMarginBottom = 16;
 
-						int width = rightPanel.getWidth();
-						int height = rightPanel.getHeight();
+				int width = rightPanel.getWidth();
+				int height = rightPanel.getHeight();
 
-						int innerWidth = width - (padding * 2);
-						int innerHeight = height - (padding * 2);
+				int innerWidth = width - (padding * 2);
+				int innerHeight = height - (padding * 2);
 
-						int tableY = padding + formHeight + formMarginBottom;
-						int tableHeight = innerHeight - formHeight - formMarginBottom;
+				int tableY = padding + formHeight + formMarginBottom;
+				int tableHeight = innerHeight - formHeight - formMarginBottom;
 
-						formPanel.setBounds(padding, padding, innerWidth, formHeight);
-						tableScrollPane.setBounds(padding, tableY, innerWidth, 460);
-					}
-				});
+				formPanel.setBounds(padding, padding, innerWidth, formHeight);
+				tableScrollPane.setBounds(padding, tableY, innerWidth, 460);
+			}
+		});
 
 		// Add right panel to main frame
 		getContentPane().add(rightPanel, BorderLayout.CENTER);
 
 		createTable();
 		showList();
-		
+
 		btnUpdate.setEnabled(false);
+
+		txtShowAll = new JTextField();
+		txtShowAll.setBounds(451, 126, 200, 30);
+		formPanel.add(txtShowAll);
+
+		lblSearch = new JLabel("Search");
+		lblSearch.setBounds(374, 134, 46, 14);
+		formPanel.add(lblSearch);
+
+		txtShowAll.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					if (txtShowAll.getText().toString().trim().equals("")) {
+						showList();
+					} else {
+
+						showListOne();
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 
 	}
 
@@ -470,6 +499,25 @@ public class MilestoneView extends JFrame {
 		cboProject.setSelectedIndex(0);
 
 		txtMilestoneName.requestFocus(true);
+	}
+
+	public void showListOne() throws SQLException {
+		String data[] = new String[6];
+		MilestoneController cc = new MilestoneController();
+		MilestoneModel cm = new MilestoneModel();
+		cm.setName(txtShowAll.getText().toString().trim());
+		List<MilestoneModel> list = cc.selectone(cm);
+		dtm.setRowCount(0);
+		for (MilestoneModel c : list) {
+			data[0] = Integer.toString(c.getMilestone_id());
+			;
+			data[1] = c.getName();
+			data[2] = c.getDue_date();
+			data[3] = getNameById(statusMap, c.getSts_id());
+			data[4] = getNameById(projectMap, c.getPj_id());
+			data[5] = "Delete";
+			dtm.addRow(data);
+		}
 	}
 
 	public void showList() {

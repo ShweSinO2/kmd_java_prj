@@ -36,7 +36,6 @@ public class MilestoneController {
 			ps.setString(2, dain.getDue_date());
 			ps.setInt(3, dain.getPj_id());
 			ps.setInt(4, dain.getSts_id());
-			
 
 			result = ps.executeUpdate();
 		} catch (SQLException e) {
@@ -57,7 +56,6 @@ public class MilestoneController {
 			ps.setInt(3, dain.getPj_id());
 			ps.setInt(4, dain.getSts_id());
 			ps.setInt(5, dain.getMilestone_id());
-			
 
 			System.out.println(ps);
 			result = ps.executeUpdate();
@@ -111,8 +109,26 @@ public class MilestoneController {
 			pm.setDue_date(rs.getString("due_date"));
 			pm.setPj_id(rs.getInt("project_id"));
 			pm.setSts_id(rs.getInt("status_id"));
-			
+
 			list.add(pm);
+		}
+		return list;
+	}
+
+	public List<MilestoneModel> selectone(MilestoneModel dain) throws SQLException {
+		List<MilestoneModel> list = new ArrayList<MilestoneModel>();
+		String sql = "select * from pj_management.milestone where milestone_name like ? order by milestone_id";
+		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ps.setString(1, dain.getName() + "%");
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			MilestoneModel cs = new MilestoneModel();
+			cs.setMilestone_id(rs.getInt("milestone_id"));
+			cs.setName(rs.getString("milestone_name"));
+			cs.setDue_date(rs.getString("due_date"));
+			cs.setPj_id(rs.getInt("project_id"));
+			cs.setSts_id(rs.getInt("status_id"));
+			list.add(cs);
 		}
 		return list;
 	}

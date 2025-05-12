@@ -24,6 +24,8 @@ import model.EmployeeModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -48,6 +50,8 @@ public class EmployeeView extends JFrame {
 	private JComboBox cboRoleID;
 	Map<String, Integer> roleMap = new HashMap<>();
 	private JTextField txtPhone;
+	private JTextField txtShowAll;
+	private JLabel lblSearch;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -402,8 +406,34 @@ public class EmployeeView extends JFrame {
 
 		createTable();
 		showList();
-		
+
 		btnUpdate.setEnabled(false);
+
+		txtShowAll = new JTextField();
+		txtShowAll.setColumns(10);
+		txtShowAll.setBounds(451, 175, 200, 30);
+		formPanel.add(txtShowAll);
+
+		lblSearch = new JLabel("Search");
+		lblSearch.setBounds(377, 183, 80, 14);
+		formPanel.add(lblSearch);
+
+		txtShowAll.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					if (txtShowAll.getText().toString().trim().equals("")) {
+						showList();
+					} else {
+
+						showListOne();
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 
 	}
 
@@ -510,6 +540,26 @@ public class EmployeeView extends JFrame {
 		cboRoleID.setSelectedIndex(0);
 
 		txtEmployeeID.requestFocus(true);
+	}
+
+	public void showListOne() throws SQLException {
+		String data[] = new String[7];
+		EmployeeController cc = new EmployeeController();
+		EmployeeModel cm = new EmployeeModel();
+		cm.setEmployee_name(txtShowAll.getText().toString().trim());
+		List<EmployeeModel> list = cc.selectone(cm);
+		dtm.setRowCount(0);
+		for (EmployeeModel c : list) {
+			data[0] = c.getEmployee_id();
+			data[1] = c.getEmployee_name();
+			data[2] = c.getPhone();
+			data[3] = c.getEmail();
+//			data[3] = pm.getPassword();
+			data[4] = c.getStatus();
+			data[5] = getNameById(roleMap, c.getRole_id());
+			data[6] = "Delete";
+			dtm.addRow(data);
+		}
 	}
 
 	public void showList() {
