@@ -411,11 +411,11 @@ public class EmployeeView extends JFrame {
 
 		txtShowAll = new JTextField();
 		txtShowAll.setColumns(10);
-		txtShowAll.setBounds(451, 175, 200, 30);
+		txtShowAll.setBounds(890, 175, 200, 30);
 		formPanel.add(txtShowAll);
 
 		lblSearch = new JLabel("Search");
-		lblSearch.setBounds(377, 183, 80, 14);
+		lblSearch.setBounds(830, 183, 80, 14);
 		formPanel.add(lblSearch);
 
 		txtShowAll.addKeyListener(new KeyAdapter() {

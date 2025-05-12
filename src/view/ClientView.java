@@ -386,11 +386,11 @@ public class ClientView extends JFrame {
 		btnUpdate.setEnabled(false);
 
 		txtShowAll = new JTextField();
-		txtShowAll.setBounds(451, 193, 200, 30);
+		txtShowAll.setBounds(890, 193, 200, 30);
 		formPanel.add(txtShowAll);
 
 		JLabel lblSearch = new JLabel("Search");
-		lblSearch.setBounds(366, 193, 80, 30);
+		lblSearch.setBounds(830, 193, 80, 30);
 		formPanel.add(lblSearch);
 
 		txtShowAll.addKeyListener(new KeyAdapter() {

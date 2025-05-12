@@ -411,18 +411,17 @@ public class AttachmentView extends JFrame {
 
 	private void saveFile() {
 	    if (selectedFile == null) {
-	        JOptionPane.showMessageDialog(this, "Please select a file before saving.");
+	        JOptionPane.showMessageDialog(this, "Please select a file!");
 	        return;
 	    }
 
-	    String selectedType = (String) cboRelatedType.getSelectedItem();
-	    String selectedName = (String) cboRelatedName.getSelectedItem();
-
-	    if (selectedType == null || selectedName == null) {
+	    if (cboRelatedType.getSelectedIndex() == 0 || cboRelatedName.getSelectedIndex() == 0) {
 	        JOptionPane.showMessageDialog(this, "Please select related type and name.");
 	        return;
 	    }
 	    
+	    String selectedType = (String) cboRelatedType.getSelectedItem();
+	    String selectedName = (String) cboRelatedName.getSelectedItem();
 	    int relatedId = dataMap.get(selectedName);
 
 	    File destDir = new File("upload_dir");
@@ -459,7 +458,7 @@ public class AttachmentView extends JFrame {
 	        psUpdate.setInt(3, attachmentId);
 	        psUpdate.executeUpdate();
 
-	        JOptionPane.showMessageDialog(this, "File saved successfully.");
+	        JOptionPane.showMessageDialog(this, "Saved successfully.");
 	        clear();
 	        showList();
 
@@ -500,8 +499,8 @@ public class AttachmentView extends JFrame {
 	private void update(int attachmentId) {
 	    String selectedType = (String) cboRelatedType.getSelectedItem();
 	    String selectedName = (String) cboRelatedName.getSelectedItem();
-	    
-	    if (selectedType == null || selectedName == null) {
+
+	    if (cboRelatedType.getSelectedIndex() == 0 || cboRelatedName.getSelectedIndex() == 0) {
 	        JOptionPane.showMessageDialog(this, "Please select related type and name.");
 	        return;
 	    }

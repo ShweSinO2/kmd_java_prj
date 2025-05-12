@@ -185,12 +185,13 @@ public class TeamMember extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				TeamMemberModel tmm = new TeamMemberModel();
 				TeamMemberController tmc = new TeamMemberController();
-				// to write form validation
-//        		if(){
-//        			
-//        		}else {
-//        			
-//        		}
+				
+				// form validation
+        		if (cboTeam.getSelectedIndex() == 0 || cboEmployee.getSelectedIndex() == 0 || cboPosition.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "There is a blank field!", "Fail", JOptionPane.ERROR_MESSAGE);
+					return;
+        		}
+        		
 				String selectedTeam = (String) cboTeam.getSelectedItem();
 				int teamId = teamMap.get(selectedTeam);
 				tmm.setTeam_id(teamId);
@@ -224,12 +225,13 @@ public class TeamMember extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				TeamMemberModel tmm = new TeamMemberModel();
 				TeamMemberController tmc = new TeamMemberController();
-				// to write form validation
-//        		if(){
-//        			
-//        		}else {
-//        			
-//        		}
+				
+				// form validation
+        		if (cboTeam.getSelectedIndex() == 0 || cboEmployee.getSelectedIndex() == 0 || cboPosition.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "There is a blank field!", "Fail", JOptionPane.ERROR_MESSAGE);
+					return;
+        		}
+        		
 				String selectedTeam = (String) cboTeam.getSelectedItem();
 				int teamId = teamMap.get(selectedTeam);
 				tmm.setTeam_id(teamId);
@@ -246,7 +248,7 @@ public class TeamMember extends JFrame {
 						JOptionPane.showMessageDialog(null, "Update Successfully", "Successfully",
 								JOptionPane.INFORMATION_MESSAGE);
 						showList();
-//						clear();
+						clear();
 					}
 				} catch (HeadlessException e1) {
 					// TODO Auto-generated catch block

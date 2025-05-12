@@ -64,8 +64,7 @@ public class TeamMemberController {
 	public int update(TeamMemberModel dain, String employee_id) {
 		int result = 0;
 		String sql = "update pj_management.team_member set team_id =?,employee_id=?,position=? where employee_id=?";
-		System.out.println("---");
-		System.out.println(dain.getTeam_id());
+
 		try {
 			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 			ps.setInt(1, dain.getTeam_id());

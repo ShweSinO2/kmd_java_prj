@@ -374,11 +374,11 @@ public class MilestoneView extends JFrame {
 		btnUpdate.setEnabled(false);
 
 		txtShowAll = new JTextField();
-		txtShowAll.setBounds(451, 126, 200, 30);
+		txtShowAll.setBounds(890, 126, 200, 30);
 		formPanel.add(txtShowAll);
 
 		lblSearch = new JLabel("Search");
-		lblSearch.setBounds(374, 134, 46, 14);
+		lblSearch.setBounds(830, 134, 46, 14);
 		formPanel.add(lblSearch);
 
 		txtShowAll.addKeyListener(new KeyAdapter() {

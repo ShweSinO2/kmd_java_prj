@@ -223,12 +223,16 @@ public class ProjectView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				ProjectModel pm = new ProjectModel();
 				ProjectController pc = new ProjectController();
-				// to write form validation
-//        		if(){
-//        			
-//        		}else {
-//        			
-//        		}
+				
+				// form validation
+				if (txtProjectName.getText().trim().isEmpty() || txtDescription.getText().trim().isEmpty() ||
+						startDate.getDate() == null || endDate.getDate() == null
+						|| cboStatus.getSelectedIndex() == 0 || cboClient.getSelectedIndex() == 0
+						|| cboTeam.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "There is a blank field!", "Fail", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
 				pm.setProject_name(txtProjectName.getText().toString());
 				pm.setDescription(txtDescription.getText().toString());
 
@@ -282,12 +286,16 @@ public class ProjectView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				ProjectModel pm = new ProjectModel();
 				ProjectController pc = new ProjectController();
-				// to write form validation
-//        		if(){
-//        			
-//        		}else {
-//        			
-//        		}
+				
+//        		// form validation
+				if (txtProjectName.getText().trim().isEmpty() || txtDescription.getText().trim().isEmpty() ||
+						startDate.getDate() == null || endDate.getDate() == null
+						|| cboStatus.getSelectedIndex() == 0 || cboClient.getSelectedIndex() == 0
+						|| cboTeam.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "There is a blank field!", "Fail", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
 				pm.setProject_id(Integer.parseInt(Project_id));
 				pm.setProject_name(txtProjectName.getText().toString());
 				pm.setDescription(txtDescription.getText().toString());
