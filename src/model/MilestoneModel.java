@@ -4,7 +4,7 @@ public class MilestoneModel {
 	
 	private int milestone_id;
 	private String name;
-	private String start_date;
+//	private String start_date;
 	private String due_date;
 	private int pj_id;
 	private int sts_id;

@@ -486,7 +486,7 @@ public class TaskView extends JFrame {
 				}
 			}
 		});
-		btnUpdate.setBounds(137, 269, 89, 30);
+		btnUpdate.setBounds(114, 269, 89, 30);
 		formPanel.add(btnUpdate);
 
 		btnClear = new JButton("Clear");
@@ -496,7 +496,7 @@ public class TaskView extends JFrame {
 				txtTaskName.requestFocus(true);
 			}
 		});
-		btnClear.setBounds(252, 269, 89, 30);
+		btnClear.setBounds(213, 269, 89, 30);
 		formPanel.add(btnClear);
 
 		JLabel lblTaskName_1 = new JLabel("Description");
@@ -561,22 +561,21 @@ public class TaskView extends JFrame {
 
 		btnUpdate.setEnabled(false);
 
-		JLabel lblTaskName_4_1 = new JLabel("Search");
-		lblTaskName_4_1.setBounds(348, 269, 80, 30);
-		formPanel.add(lblTaskName_4_1);
-
 		txtShowAll = new JTextField();
-		txtShowAll.setBounds(389, 269, 142, 30);
+		txtShowAll.setBounds(331, 269, 118, 30);
 		formPanel.add(txtShowAll);
 		
 		cboStatusToSearch = new JComboBox();
 		MySqlQuery.addCoboBox("status", "status_id", "status_name", cboStatusToSearch, StatusMap);
-		cboStatusToSearch.setBounds(588, 269, 73, 30);
+		cboStatusToSearch.setBounds(493, 269, 118, 30);
 		formPanel.add(cboStatusToSearch);
+		
+		JButton btnSearch = new JButton("Search");
+		btnSearch.setBounds(612, 269, 89, 30);
+		formPanel.add(btnSearch);
 
-		txtShowAll.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				try {
 					if (txtShowAll.getText().toString().trim().equals("")) {
 						showList();
@@ -744,8 +743,8 @@ public class TaskView extends JFrame {
 		TaskController cc = new TaskController();
 		TaskModel cm = new TaskModel();
 		String assigned_name = txtShowAll.getText().toString().trim();
-		String status_name=(String) cboStatus.getSelectedItem().toString();
-
+		String status_name=(String) cboStatusToSearch.getSelectedItem().toString();
+		
 		cm.setAssigned_id(getIDbyName(AssignedMap, assigned_name));
 		cm.setStatus_id(getIDbyNamev1(StatusMap, status_name));
 		List<TaskModel> list = cc.selectone(cm);

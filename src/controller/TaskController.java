@@ -178,7 +178,7 @@ public class TaskController {
 		ps.setInt(2, dain.getStatus_id());
 		System.out.println(dain.getStart_date());
 		ResultSet rs = ps.executeQuery();
-		if (rs.next()) {
+		while (rs.next()) {
 			TaskModel cs = new TaskModel();
 			cs.setTask_id(rs.getInt("task_id"));
 			cs.setTask_name(rs.getString("task_name"));
