@@ -172,11 +172,28 @@ public class TaskController {
 
 	public List<TaskModel> selectone(TaskModel dain) throws SQLException {
 		List<TaskModel> list = new ArrayList<TaskModel>();
-		String sql = "select * from pj_management.task where assigned_by_id like ? and status_id = ? order by task_id";
-		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
-		ps.setString(1, dain.getAssigned_id() + "%");
-		ps.setInt(2, dain.getStatus_id());
-		System.out.println(dain.getStart_date());
+		
+		String sql = "";
+		PreparedStatement ps;
+		
+		System.out.println("------");
+		System.out.println(dain.getStatus_id());
+		
+		if(dain.getAssigned_id() != null && !dain.getAssigned_id().isEmpty() && dain.getStatus_id() > 0) {
+			sql = "select * from pj_management.task where assigned_by_id like ? and status_id = ? order by task_id";
+			ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setString(1, dain.getAssigned_id() + "%");
+			ps.setInt(2, dain.getStatus_id());		
+		} else if(dain.getAssigned_id() != null && !dain.getAssigned_id().isEmpty() && dain.getStatus_id() == 0) {
+			sql = "select * from pj_management.task where assigned_by_id like ? order by task_id";
+			ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setString(1, dain.getAssigned_id() + "%");
+		} else {
+			sql = "select * from pj_management.task where status_id = ? order by task_id";
+			ps = (PreparedStatement) con.prepareStatement(sql);
+			ps.setInt(1, dain.getStatus_id());
+		}
+				
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			TaskModel cs = new TaskModel();

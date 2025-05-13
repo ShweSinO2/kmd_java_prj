@@ -20,6 +20,7 @@ import config.MySqlQuery;
 import controller.EmployeeController;
 import controller.ProjectController;
 import model.EmployeeModel;
+import model.ProjectModel;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -28,6 +29,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -99,13 +102,13 @@ public class EmployeeView extends JFrame {
 				int column = tblEmployee.columnAtPoint(e.getPoint());
 				EmployeeModel pm = new EmployeeModel();
 				String Employee_id = (String) tblEmployee.getValueAt(r, 0);
-				System.out.println(Employee_id);
+				
 				txtEmployeeID.setText(Employee_id);
 				txtName.setText((String) tblEmployee.getValueAt(r, 1));
 				txtPhone.setText((String) tblEmployee.getValueAt(r, 2));
 				txtEmail.setText((String) tblEmployee.getValueAt(r, 3));
 
-				String statusName = (String) tblEmployee.getValueAt(r, 5);
+				String statusName = (String) tblEmployee.getValueAt(r, 4);
 				cboRoleID.setSelectedItem(statusName);
 				try {
 					txtPassword.setText(ec.getPswbyId(Employee_id));
@@ -118,7 +121,7 @@ public class EmployeeView extends JFrame {
 				btnUpdate.setEnabled(true);
 				txtName.requestFocus();
 				txtName.selectAll();
-				if (column == 6) {
+				if (column == 5) {
 					DefaultTableModel model = (DefaultTableModel) tblEmployee.getModel();
 					String employeeId = (String) model.getValueAt(r, 0);
 					pm.setEmployee_id(employeeId);
@@ -189,7 +192,8 @@ public class EmployeeView extends JFrame {
 				if (txtEmployeeID.getText().trim().toString().equals("")
 						|| txtName.getText().trim().toString().equals("")
 						|| txtEmail.getText().trim().toString().equals("")
-						|| txtPassword.getText().trim().toString().equals("")) {
+						|| txtPassword.getText().trim().toString().equals("")
+						|| cboRoleID.getSelectedIndex() == 0) {
 					JOptionPane.showMessageDialog(null, "There is a blank field!", "Fail", JOptionPane.ERROR_MESSAGE);
 //					txtShowAll.requestFocus(true);
 //					txtShowAll.selectAll();
@@ -269,7 +273,8 @@ public class EmployeeView extends JFrame {
 						|| txtName.getText().trim().toString().equals("")
 						|| txtPhone.getText().trim().toString().equals("")
 						|| txtEmail.getText().trim().toString().equals("")
-						|| txtPassword.getText().trim().toString().equals("")) {
+						|| txtPassword.getText().trim().toString().equals("")
+						|| cboRoleID.getSelectedIndex() == 0) {
 					JOptionPane.showMessageDialog(null, "There is a blank field!", "Fail", JOptionPane.ERROR_MESSAGE);
 //					txtShowAll.requestFocus(true);
 //					txtShowAll.selectAll();
@@ -417,6 +422,23 @@ public class EmployeeView extends JFrame {
 		lblSearch = new JLabel("Search");
 		lblSearch.setBounds(830, 183, 80, 14);
 		formPanel.add(lblSearch);
+		
+		JButton btnCsvexport = new JButton("ExportToCSV");
+		btnCsvexport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EmployeeController ec = new EmployeeController();
+				List<EmployeeModel> employeeList;
+				try {
+					employeeList = ec.selectall();
+					exportToCSV(employeeList);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnCsvexport.setBounds(377, 175, 124, 30);
+		formPanel.add(btnCsvexport);
 
 		txtShowAll.addKeyListener(new KeyAdapter() {
 			@Override
@@ -448,7 +470,7 @@ public class EmployeeView extends JFrame {
 		dtm.addColumn("Name");
 		dtm.addColumn("Phone");
 		dtm.addColumn("Email");
-		dtm.addColumn("Status");
+//		dtm.addColumn("Status");
 		dtm.addColumn("Role");
 		dtm.addColumn("");
 		tblEmployee.setModel(dtm);
@@ -459,7 +481,7 @@ public class EmployeeView extends JFrame {
 		setColumnWidth(3, 100);
 		setColumnWidth(4, 100);
 		setColumnWidth(5, 100);
-		setColumnWidth(6, 100);
+//		setColumnWidth(6, 100);
 
 		// Customize table header
 		JTableHeader header = tblEmployee.getTableHeader();
@@ -471,7 +493,7 @@ public class EmployeeView extends JFrame {
 		// Apply center alignment to specific columns
 		tblEmployee.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 		tblEmployee.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-		tblEmployee.getColumnModel().getColumn(6).setCellRenderer(createButtonCellRenderer("Delete"));
+		tblEmployee.getColumnModel().getColumn(5).setCellRenderer(createButtonCellRenderer("Delete"));
 
 		// Set custom header renderer
 		DefaultTableCellRenderer headerRenderer = createHeaderRenderer();
@@ -543,7 +565,7 @@ public class EmployeeView extends JFrame {
 	}
 
 	public void showListOne() throws SQLException {
-		String data[] = new String[7];
+		String data[] = new String[6];
 		EmployeeController cc = new EmployeeController();
 		EmployeeModel cm = new EmployeeModel();
 		cm.setEmployee_name(txtShowAll.getText().toString().trim());
@@ -555,15 +577,15 @@ public class EmployeeView extends JFrame {
 			data[2] = c.getPhone();
 			data[3] = c.getEmail();
 //			data[3] = pm.getPassword();
-			data[4] = c.getStatus();
-			data[5] = getNameById(roleMap, c.getRole_id());
-			data[6] = "Delete";
+//			data[4] = c.getStatus();
+			data[4] = getNameById(roleMap, c.getRole_id());
+			data[5] = "Delete";
 			dtm.addRow(data);
 		}
 	}
 
 	public void showList() {
-		String data[] = new String[7];
+		String data[] = new String[6];
 		EmployeeController pc = new EmployeeController();
 		try {
 			List<EmployeeModel> list = pc.selectall();
@@ -574,15 +596,53 @@ public class EmployeeView extends JFrame {
 				data[2] = pm.getPhone();
 				data[3] = pm.getEmail();
 //				data[3] = pm.getPassword();
-				data[4] = pm.getStatus();
-				data[5] = getNameById(roleMap, pm.getRole_id());
-				data[6] = "Delete";
+//				data[4] = pm.getStatus();
+				data[4] = getNameById(roleMap, pm.getRole_id());
+				data[5] = "Delete";
 				dtm.addRow(data);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void exportToCSV(List<EmployeeModel> employeeList) {
+		MySqlQuery.getComboData("role", "role_id", "role_name", roleMap);
+		
+		String userHome = System.getProperty("user.home");
+		String timestamp = String.valueOf(System.currentTimeMillis());
+		String downloadsPath = userHome + "\\Downloads\\" + timestamp +"_employee.csv";
+
+		try (FileWriter writer = new FileWriter(downloadsPath)) {
+			// Write CSV header
+			writer.append("EmployeeID,Name,Phone,Email,Role\n");
+
+			// Write project data
+			for (EmployeeModel em : employeeList) {
+				writer.append(String.valueOf(em.getEmployee_id())).append(",");
+				writer.append(escapeCsv(em.getEmployee_name())).append(",");
+				writer.append("=\"").append(em.getPhone()).append("\"").append(",");
+				writer.append(String.valueOf(em.getEmail())).append(",");
+				writer.append(String.valueOf(getNameById(roleMap, em.getRole_id()))).append("\n");
+			}
+
+			 JOptionPane.showMessageDialog(null, "CSV Export Successful!",
+		                "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// Helper method to handle commas and quotes in CSV
+	private String escapeCsv(String value) {
+		if (value == null)
+			return "";
+		if (value.contains(",") || value.contains("\"")) {
+			value = value.replace("\"", "\"\"");
+			return "\"" + value + "\"";
+		}
+		return value;
 	}
 
 	public static String getNameById(Map<String, Integer> map, int id) {

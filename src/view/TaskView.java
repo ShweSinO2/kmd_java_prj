@@ -461,11 +461,11 @@ public class TaskView extends JFrame {
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
 					} else {
-						if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date())) {
-						    JOptionPane.showMessageDialog(null, "The assigned employee already has a task starting on this date!", "Date Conflict", JOptionPane.ERROR_MESSAGE);
-						    txtStartDate.requestFocus();
-						    return;
-						}
+//						if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date())) {
+//						    JOptionPane.showMessageDialog(null, "The assigned employee already has a task starting on this date!", "Date Conflict", JOptionPane.ERROR_MESSAGE);
+//						    txtStartDate.requestFocus();
+//						    return;
+//						}
 
 						try {
 							int rs = pc.update(pm);
@@ -562,25 +562,24 @@ public class TaskView extends JFrame {
 		btnUpdate.setEnabled(false);
 
 		txtShowAll = new JTextField();
-		txtShowAll.setBounds(331, 269, 118, 30);
+		txtShowAll.setBounds(750, 269, 118, 30);
 		formPanel.add(txtShowAll);
 		
 		cboStatusToSearch = new JComboBox();
 		MySqlQuery.addCoboBox("status", "status_id", "status_name", cboStatusToSearch, StatusMap);
-		cboStatusToSearch.setBounds(493, 269, 118, 30);
+		cboStatusToSearch.setBounds(880, 269, 118, 30);
 		formPanel.add(cboStatusToSearch);
 		
 		JButton btnSearch = new JButton("Search");
-		btnSearch.setBounds(612, 269, 89, 30);
+		btnSearch.setBounds(1010, 269, 89, 30);
 		formPanel.add(btnSearch);
 
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if (txtShowAll.getText().toString().trim().equals("")) {
+					if (txtShowAll.getText().toString().trim().equals("") && cboStatusToSearch.getSelectedIndex() == 0) {
 						showList();
 					} else {
-
 						showListOne();
 					}
 				} catch (SQLException e1) {
@@ -699,12 +698,16 @@ public class TaskView extends JFrame {
 		txtEndDate.setDate(null);
 		cboProject.setSelectedIndex(0);
 		cboStatus.setSelectedIndex(0);
-		cboMilestone.setSelectedIndex(0);
-		cboAssigned.setSelectedIndex(0);
+//		cboMilestone.setSelectedIndex(0);
+//		cboAssigned.setSelectedIndex(0);
 		cboPriority.setSelectedIndex(0);
 		cboType.setSelectedIndex(0);
 
+		txtShowAll.setText("");
+		cboStatusToSearch.setSelectedIndex(0);
 		txtTaskName.requestFocus(true);
+		
+		showList();
 	}
 
 	public void showList() {

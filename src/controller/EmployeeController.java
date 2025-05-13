@@ -142,7 +142,7 @@ public class EmployeeController {
 			pm.setPhone(rs.getString("phone"));
 			pm.setEmail(rs.getString("email"));
 			pm.setPassword(rs.getString("password"));
-			pm.setStatus(rs.getString("status"));
+//			pm.setStatus(rs.getString("status"));
 			pm.setRole_id(rs.getInt("role_id"));
 
 			list.add(pm);
@@ -178,7 +178,7 @@ public class EmployeeController {
 			cs.setPassword(rs.getString("password"));
 			cs.setPhone(rs.getString("phone"));
 			cs.setEmail(rs.getString("email"));
-			cs.setStatus(rs.getString("status"));
+//			cs.setStatus(rs.getString("status"));
 			cs.setRole_id(rs.getInt("role_id"));
 			list.add(cs);
 		}
