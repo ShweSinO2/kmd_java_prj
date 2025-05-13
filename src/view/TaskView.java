@@ -360,6 +360,12 @@ public class TaskView extends JFrame {
 					else {
 
 						try {
+							if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date())) {
+							    JOptionPane.showMessageDialog(null, "The assigned employee already has a task starting on this date!", "Date Conflict", JOptionPane.ERROR_MESSAGE);
+							    txtStartDate.requestFocus();
+							    return;
+							}
+							
 							if (pc.isduplicate(pm)) {
 								JOptionPane.showMessageDialog(null, "There is a same project name!", "Fail",
 										JOptionPane.ERROR_MESSAGE);
@@ -466,6 +472,11 @@ public class TaskView extends JFrame {
 					}
 
 					else {
+						if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date())) {
+						    JOptionPane.showMessageDialog(null, "The assigned employee already has a task starting on this date!", "Date Conflict", JOptionPane.ERROR_MESSAGE);
+						    txtStartDate.requestFocus();
+						    return;
+						}
 
 						try {
 							int rs = pc.update(pm);

@@ -12,7 +12,9 @@ import javax.swing.table.TableColumn;
 import com.toedter.calendar.JDateChooser;
 
 import config.MySqlQuery;
+import controller.MilestoneController;
 import controller.ProjectController;
+import model.MilestoneModel;
 import model.ProjectModel;
 
 import java.awt.event.ActionListener;
@@ -30,6 +32,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ProjectView extends JFrame {
 	DefaultTableModel dtm = new DefaultTableModel();
@@ -48,6 +52,7 @@ public class ProjectView extends JFrame {
 	Map<String, Integer> statusMap = new HashMap<>();
 	Map<String, Integer> teamMap = new HashMap<>();
 	Map<String, Integer> clientMap = new HashMap<>();
+	private JTextField txtShowAll;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -465,6 +470,30 @@ public class ProjectView extends JFrame {
 		});
 		btnCsvexport.setBounds(377, 219, 124, 30);
 		formPanel.add(btnCsvexport);
+		
+		JLabel lblNewLabel_1 = new JLabel("Search");
+		lblNewLabel_1.setBounds(830, 219, 46, 30);
+		formPanel.add(lblNewLabel_1);
+		
+		txtShowAll = new JTextField();
+		txtShowAll.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					if (txtShowAll.getText().toString().trim().equals("")) {
+						showList();
+					} else {
+
+						showListOne();
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		txtShowAll.setBounds(890, 219, 200, 30);
+		formPanel.add(txtShowAll);
 
 	}
 	
@@ -590,10 +619,40 @@ public class ProjectView extends JFrame {
 				data[7] = getNameById(clientMap, pm.getClient_id());
 				data[8] = "Delete";
 				dtm.addRow(data);
+				
+//				 dtm = new DefaultTableModel() {
+//					    @Override
+//					    public boolean isCellEditable(int row, int column) {
+//					        // Get status name from the status column (assuming index 5)
+//					        String status = (String) getValueAt(row, 5);
+//					        return !status.equalsIgnoreCase("Completed");
+//					    }
+//					};
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public void showListOne() throws SQLException {
+		String data[] = new String[9];
+		ProjectController pc = new ProjectController();
+		ProjectModel pms = new ProjectModel();
+		pms.setProject_name(txtShowAll.getText().toString().trim());
+		List<ProjectModel> list = pc.selectone(pms);
+		dtm.setRowCount(0);
+		for (ProjectModel pm : list) {
+			data[0] = Integer.toString(pm.getProject_id());;
+			data[1] = pm.getProject_name();
+			data[2] = pm.getDescription();
+			data[3] = pm.getStart_date();
+			data[4] = pm.getEnd_date();
+			data[5] = getNameById(statusMap, pm.getStatus_id());
+			data[6] = getNameById(teamMap, pm.getTeam_id());
+			data[7] = getNameById(clientMap, pm.getClient_id());
+			data[8] = "Delete";
+			dtm.addRow(data);
 		}
 	}
 	

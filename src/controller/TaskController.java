@@ -196,6 +196,23 @@ public class TaskController {
 		}
 		return list;
 	}
+	
+	public boolean isStartDateConflict(String assignedId, String startDate) {
+	    boolean conflict = false;
+	    String sql = "SELECT * FROM pj_management.task WHERE assigned_by_id = ? AND start_date = ?";
+	    try {
+	        PreparedStatement ps = con.prepareStatement(sql);
+	        ps.setString(1, assignedId);
+	        ps.setString(2, startDate);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            conflict = true;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return conflict;
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

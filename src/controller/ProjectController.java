@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import config.DBConfig;
+import model.MilestoneModel;
 import model.ProjectModel;
 
 public class ProjectController {
@@ -132,6 +133,27 @@ public class ProjectController {
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
+			ProjectModel pm = new ProjectModel();
+			pm.setProject_id(rs.getInt("project_id"));
+			pm.setProject_name(rs.getString("project_name"));
+			pm.setDescription(rs.getString("description"));
+			pm.setStart_date(rs.getString("start_date"));
+			pm.setEnd_date(rs.getString("end_date"));
+			pm.setStatus_id(rs.getInt("status_id"));
+			pm.setTeam_id(rs.getInt("team_id"));
+			pm.setClient_id(rs.getInt("client_id"));
+			list.add(pm);
+		}
+		return list;
+	}
+	
+	public List<ProjectModel> selectone(ProjectModel dain) throws SQLException {
+		List<ProjectModel> list = new ArrayList<ProjectModel>();
+		String sql = "select * from pj_management.project where project_name like ? order by project_id";
+		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ps.setString(1, dain.getProject_name() + "%");
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
 			ProjectModel pm = new ProjectModel();
 			pm.setProject_id(rs.getInt("project_id"));
 			pm.setProject_name(rs.getString("project_name"));
