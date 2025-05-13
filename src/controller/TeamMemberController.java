@@ -94,5 +94,27 @@ public class TeamMemberController {
 		}
 		return result;
 	}
+	
+	public boolean existsTeamMember(int teamId, String employeeId) {
+	    boolean exists = false;
+	    String sql = "SELECT * FROM team_member WHERE team_id = ? AND employee_id = ?";
+	    
+	    try {
+			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+	        ps.setInt(1, teamId);
+	        ps.setString(2, employeeId);
+	        ResultSet rs = ps.executeQuery();
+	        
+	        if (rs.next()) {
+	            exists = true;
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return exists;
+	}
+
 
 }

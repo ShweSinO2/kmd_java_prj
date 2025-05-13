@@ -11,6 +11,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import com.toedter.calendar.JDateChooser;
 
+import config.Checking;
 import config.MySqlQuery;
 import controller.MilestoneController;
 import controller.ProjectController;
@@ -259,28 +260,48 @@ public class ProjectView extends JFrame {
 				String selectedClient = (String) cboClient.getSelectedItem();
 				int clientId = clientMap.get(selectedClient);
 				pm.setClient_id(clientId);
+				
+				if (Checking.IsValidName(pm.getProject_name())) {
+					JOptionPane.showMessageDialog(null, "Invlaid project name field", "Invlaid", JOptionPane.ERROR_MESSAGE);
+					txtProjectName.requestFocus(true);
+					txtProjectName.selectAll();
+				} else if (Checking.IsAllDigit(pm.getProject_name())) {
+					JOptionPane.showMessageDialog(null, "Task Name have all digit", "Invlaid",
+							JOptionPane.ERROR_MESSAGE);
+					txtProjectName.requestFocus(true);
+					txtProjectName.selectAll();
+				} else if (!Checking.validateFutureDate(pm.getStart_date())) {
+					JOptionPane.showMessageDialog(null, "Invalid Start Date", "Invlaid", JOptionPane.ERROR_MESSAGE);
+					txtProjectName.requestFocus(true);
+					txtProjectName.selectAll();
+				} else if (!Checking.validateEndDate(pm.getStart_date(), pm.getEnd_date())) {
+					JOptionPane.showMessageDialog(null, "Invalid End Date", "Invlaid",
+							JOptionPane.ERROR_MESSAGE);
+					txtProjectName.requestFocus(true);
+					txtProjectName.selectAll();
+				} else {
+					try {
+						if (pc.isduplicate(pm)) {
+							JOptionPane.showMessageDialog(null, "There is a same project name!", "Fail",
+									JOptionPane.ERROR_MESSAGE);
+							txtProjectName.requestFocus(true);
+							txtProjectName.selectAll();
+						} else {
+							int rs = pc.insert(pm);
+							if (rs == 1) {
+								JOptionPane.showMessageDialog(null, "Save Successfully", "Successfully",
+										JOptionPane.INFORMATION_MESSAGE);
+								showList();
+								clear();
+							}
 
-				try {
-					if (pc.isduplicate(pm)) {
-						JOptionPane.showMessageDialog(null, "There is a same project name!", "Fail",
-								JOptionPane.ERROR_MESSAGE);
-						txtProjectName.requestFocus(true);
-						txtProjectName.selectAll();
-					} else {
-						int rs = pc.insert(pm);
-						if (rs == 1) {
-							JOptionPane.showMessageDialog(null, "Save Successfully", "Successfully",
-									JOptionPane.INFORMATION_MESSAGE);
-//							AutoID();
-							showList();
-							clear();
 						}
-
+					} catch (HeadlessException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-				} catch (HeadlessException | SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
 				}
+
 			}
 		});
 		btnSave.setBounds(20, 219, 89, 30);
@@ -324,91 +345,34 @@ public class ProjectView extends JFrame {
 				int clientId = clientMap.get(selectedClient);
 				pm.setClient_id(clientId);
 				
-				try {
-					if(pc.isduplicate(pm)) {
-						JOptionPane.showMessageDialog(null, "There is a same project name!","Fail", JOptionPane.ERROR_MESSAGE);	
-						txtProjectName.requestFocus(true);
-					}else {
-						int rs = pc.update(pm);
-						if(rs==1) {
-							JOptionPane.showMessageDialog(null, "Update Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
-							clear();
-							showList();
+				if (Checking.IsValidName(pm.getProject_name())) {
+					JOptionPane.showMessageDialog(null, "Invlaid project name field", "Invlaid", JOptionPane.ERROR_MESSAGE);
+					txtProjectName.requestFocus(true);
+					txtProjectName.selectAll();
+				} else if (Checking.IsAllDigit(pm.getProject_name())) {
+					JOptionPane.showMessageDialog(null, "Task Name have all digit", "Invlaid",
+							JOptionPane.ERROR_MESSAGE);
+					txtProjectName.requestFocus(true);
+					txtProjectName.selectAll();
+				} else {
+					try {
+						if(pc.isduplicate(pm)) {
+							JOptionPane.showMessageDialog(null, "There is a same project name!","Fail", JOptionPane.ERROR_MESSAGE);	
+							txtProjectName.requestFocus(true);
+						}else {
+							int rs = pc.update(pm);
+							if(rs==1) {
+								JOptionPane.showMessageDialog(null, "Update Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
+								clear();
+								showList();
+							}
+							
 						}
-						
+					}catch (HeadlessException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-				}catch (HeadlessException | SQLException e1) {
-//					// TODO Auto-generated catch block
-					e1.printStackTrace();
-					
 				}
-//				if(lblCustomerID.getText().trim().toString().equals("")||txtCustomerName.getText().trim().toString().equals("") ||
-//						txtCustomerAddress.getText().trim().toString().equals("")||txtCustomerPhone.getText().trim().toString().equals("")||txtCustomerAddress.getText().trim().toString().equals("")) {
-//					JOptionPane.showMessageDialog(null, "There is a blank field!","Fail", JOptionPane.ERROR_MESSAGE);
-//					txtCustomerName.requestFocus(true);
-//					txtCustomerName.selectAll();
-//				}else {
-//					cm.setCustomer_id(lblCustomerID.getText().toString());
-//					cm.setName(txtCustomerName.getText().toString());
-//					cm.setAddress(txtCustomerAddress.getText().toString());
-//					cm.setEmail(txtCustomerEmail.getText().toString());
-//					cm.setPhone(txtCustomerPhone.getText().toString());
-//					if(Checking.IsValidName(cm.getName()) ) {
-//						JOptionPane.showMessageDialog(null, "Invlaid name field","Invlaid", JOptionPane.ERROR_MESSAGE);
-//						txtCustomerName.requestFocus(true);
-//						txtCustomerName.selectAll();
-//					}else if(Checking.IsValidName(cm.getAddress())) {
-//						JOptionPane.showMessageDialog(null, "Invlaid address field","Invlaid", JOptionPane.ERROR_MESSAGE);
-//						txtCustomerName.requestFocus(true);
-//						txtCustomerName.selectAll();
-//					}else if(Checking.IsValidName(cm.getEmail())) {
-//						JOptionPane.showMessageDialog(null, "Invlaid email field","Invlaid", JOptionPane.ERROR_MESSAGE);
-//						txtCustomerName.requestFocus(true);
-//						txtCustomerName.selectAll();
-//					}else if(Checking.IsValidName(cm.getPhone())) {
-//						JOptionPane.showMessageDialog(null, "Invlaid phone field","Invlaid", JOptionPane.ERROR_MESSAGE);
-//						txtCustomerName.requestFocus(true);
-//						txtCustomerName.selectAll();
-//					}else if(!Checking.IsAllDigit(cm.getName())) {
-//						JOptionPane.showMessageDialog(null, "Name have all digit","Invlaid", JOptionPane.ERROR_MESSAGE);
-//						txtCustomerName.requestFocus(true);
-//						txtCustomerName.selectAll();
-//					}else if(!Checking.IsAllDigit(cm.getAddress())){
-//						JOptionPane.showMessageDialog(null, "Address have all digit","Invlaid", JOptionPane.ERROR_MESSAGE);
-//						txtCustomerName.requestFocus(true);
-//						txtCustomerName.selectAll();
-//					}else if(!Checking.IsEmailformat(cm.getEmail())) {
-//						JOptionPane.showMessageDialog(null, "Email Format Error","Invlaid", JOptionPane.ERROR_MESSAGE);
-//						txtCustomerName.requestFocus(true);
-//						txtCustomerName.selectAll();
-//						}
-//					else if(!Checking.isPhoneNo(cm.getPhone())) {
-//						JOptionPane.showMessageDialog(null, "Phone_number Format Error","Invlaid", JOptionPane.ERROR_MESSAGE);
-//						txtCustomerName.requestFocus(true);
-//						txtCustomerName.selectAll();
-//					}
-//					else {
-//						try {
-//							if(cc.isduplicate(cm)) {
-//								JOptionPane.showMessageDialog(null, "There is a same supplier name!","Fail", JOptionPane.ERROR_MESSAGE);	
-//								txtCustomerName.requestFocus(true);
-//								txtCustomerName.selectAll();
-//							}else {
-//								int rs = cc.update(cm);
-//								if(rs==1) {
-//									JOptionPane.showMessageDialog(null, "Update Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
-//									AutoID();
-//									clear();
-//									showList();
-//								}
-//								
-//							}
-//						} catch (HeadlessException | SQLException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-//					}
-//				}
 			}
 		});
 		btnUpdate.setBounds(141, 219, 89, 30);
@@ -619,15 +583,6 @@ public class ProjectView extends JFrame {
 				data[7] = getNameById(clientMap, pm.getClient_id());
 				data[8] = "Delete";
 				dtm.addRow(data);
-				
-//				 dtm = new DefaultTableModel() {
-//					    @Override
-//					    public boolean isCellEditable(int row, int column) {
-//					        // Get status name from the status column (assuming index 5)
-//					        String status = (String) getValueAt(row, 5);
-//					        return !status.equalsIgnoreCase("Completed");
-//					    }
-//					};
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

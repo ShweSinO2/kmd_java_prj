@@ -411,12 +411,12 @@ public class AttachmentView extends JFrame {
 
 	private void saveFile() {
 	    if (selectedFile == null) {
-	        JOptionPane.showMessageDialog(this, "Please select a file!");
+            JOptionPane.showMessageDialog(null, "Please select file!", "Error", JOptionPane.ERROR_MESSAGE);
 	        return;
 	    }
 
 	    if (cboRelatedType.getSelectedIndex() == 0 || cboRelatedName.getSelectedIndex() == 0) {
-	        JOptionPane.showMessageDialog(this, "Please select related type and name.");
+	        JOptionPane.showMessageDialog(null, "Please select related type and name.", "Error", JOptionPane.ERROR_MESSAGE);
 	        return;
 	    }
 	    
@@ -501,7 +501,7 @@ public class AttachmentView extends JFrame {
 	    String selectedName = (String) cboRelatedName.getSelectedItem();
 
 	    if (cboRelatedType.getSelectedIndex() == 0 || cboRelatedName.getSelectedIndex() == 0) {
-	        JOptionPane.showMessageDialog(this, "Please select related type and name.");
+	        JOptionPane.showMessageDialog(null, "Please select related type and name.", "Error", JOptionPane.ERROR_MESSAGE);
 	        return;
 	    }
 	    

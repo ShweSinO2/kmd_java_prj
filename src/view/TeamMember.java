@@ -201,6 +201,12 @@ public class TeamMember extends JFrame {
 				tmm.setEmployee_id(employeeId);
 				
 				tmm.setPosition((String) cboPosition.getSelectedItem());
+				
+				   // check duplicate
+		        if (tmc.existsTeamMember(teamId, employeeId)) {
+		            JOptionPane.showMessageDialog(null, "This employee is already in the selected team!", "Duplicate Entry", JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
 
 				try {
 					int rs = tmc.insert(tmm);
@@ -209,7 +215,7 @@ public class TeamMember extends JFrame {
 								JOptionPane.INFORMATION_MESSAGE);
 //						AutoID();
 						showList();
-//						clear();
+						clear();
 					}
 				} catch (HeadlessException e1) {
 					// TODO Auto-generated catch block

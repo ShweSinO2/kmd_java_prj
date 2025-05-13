@@ -347,11 +347,11 @@ public class TaskView extends JFrame {
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
 					} else if (!Checking.validateFutureDate(pm.getStart_date())) {
-						JOptionPane.showMessageDialog(null, "Invalid Start date", "Invlaid", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Invalid Start Date", "Invlaid", JOptionPane.ERROR_MESSAGE);
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
 					} else if (!Checking.validateEndDate(pm.getStart_date(), pm.getEnd_date())) {
-						JOptionPane.showMessageDialog(null, "Task Name have all digit", "Invlaid",
+						JOptionPane.showMessageDialog(null, "Invalid End Date", "Invlaid",
 								JOptionPane.ERROR_MESSAGE);
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
@@ -460,18 +460,7 @@ public class TaskView extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
-					} else if (!Checking.validateFutureDate(pm.getStart_date())) {
-						JOptionPane.showMessageDialog(null, "Invalid Start date", "Invlaid", JOptionPane.ERROR_MESSAGE);
-						txtTaskName.requestFocus(true);
-						txtTaskName.selectAll();
-					} else if (!Checking.validateEndDate(pm.getStart_date(), pm.getEnd_date())) {
-						JOptionPane.showMessageDialog(null, "Task Name have all digit", "Invlaid",
-								JOptionPane.ERROR_MESSAGE);
-						txtTaskName.requestFocus(true);
-						txtTaskName.selectAll();
-					}
-
-					else {
+					} else {
 						if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date())) {
 						    JOptionPane.showMessageDialog(null, "The assigned employee already has a task starting on this date!", "Date Conflict", JOptionPane.ERROR_MESSAGE);
 						    txtStartDate.requestFocus();
@@ -674,7 +663,8 @@ public class TaskView extends JFrame {
 
 				// Style the label like a button
 				label.setPreferredSize(new Dimension(30, 15));
-				label.setBackground(new Color(255, 255, 255));
+//				label.setBackground(new Color(255, 255, 255));
+				label.setBackground(new Color(255, 204, 153));
 				label.setForeground(new Color(220, 53, 69));
 				label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 				label.setFont(new Font("Arial", Font.BOLD, 12));
@@ -755,8 +745,7 @@ public class TaskView extends JFrame {
 		TaskModel cm = new TaskModel();
 		String assigned_name = txtShowAll.getText().toString().trim();
 		String status_name=(String) cboStatus.getSelectedItem().toString();
-		System.out.println(assigned_name);
-		System.out.println(status_name);
+
 		cm.setAssigned_id(getIDbyName(AssignedMap, assigned_name));
 		cm.setStatus_id(getIDbyNamev1(StatusMap, status_name));
 		List<TaskModel> list = cc.selectone(cm);

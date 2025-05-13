@@ -107,7 +107,7 @@ public class ProjectController {
 
 	public List<ProjectModel> selectall() throws SQLException {
 		List<ProjectModel> list = new ArrayList<ProjectModel>();
-		String sql = "select * from pj_management.project order by project_id desc";
+		String sql = "select * from pj_management.project order by project_id desc, status_id desc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
