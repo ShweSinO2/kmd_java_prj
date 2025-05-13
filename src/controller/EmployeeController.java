@@ -102,10 +102,10 @@ public class EmployeeController {
 
 	public boolean isduplicate(EmployeeModel dain) throws SQLException {
 		boolean duplicate = false;
-		String sql = "select * from pj_management.employee where name = ? ";
+		String sql = "select * from pj_management.employee where name = ? and email = ?";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ps.setString(1, dain.getEmployee_name());
-//		ps.setString(2, dain.getEmployee_id());
+		ps.setString(2, dain.getEmail());
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
 			duplicate = true;
@@ -132,7 +132,7 @@ public class EmployeeController {
 
 	public List<EmployeeModel> selectall() throws SQLException {
 		List<EmployeeModel> list = new ArrayList<EmployeeModel>();
-		String sql = "select * from pj_management.employee order by employee_id desc";
+		String sql = "select * from pj_management.employee order by employee_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
@@ -167,11 +167,11 @@ public class EmployeeController {
 
 	public List<EmployeeModel> selectone(EmployeeModel dain) throws SQLException {
 		List<EmployeeModel> list = new ArrayList<EmployeeModel>();
-		String sql = "select * from pj_management.employee where name like ? order by employee_id desc";
+		String sql = "select * from pj_management.employee where name like ? order by employee_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ps.setString(1, dain.getEmployee_name() + "%");
 		ResultSet rs = ps.executeQuery();
-		if (rs.next()) {
+		while (rs.next()) {
 			EmployeeModel cs = new EmployeeModel();
 			cs.setEmployee_id(rs.getString("employee_id"));
 			cs.setEmployee_name(rs.getString("name"));
@@ -183,6 +183,23 @@ public class EmployeeController {
 			list.add(cs);
 		}
 		return list;
+	}
+	
+	public int searchEmployeeRole(String name, String password) {
+		int result = 0;
+		String sql = "select role_id from pj_management.employee where name=? and password=?";
+		try {
+			PreparedStatement ps =(PreparedStatement) con.prepareStatement(sql);
+			ps.setString(1, name);
+			ps.setString(2, password);
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				result = rs.getInt("role_id") ;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+	    return result;
 	}
 
 	public static void main(String[] args) {
