@@ -226,6 +226,17 @@ public class MilestoneView extends JFrame {
 						txtMilestoneName.requestFocus(true);
 						txtMilestoneName.selectAll();
 					}
+					else if (!Checking.validateFutureDate(pm.getDue_date())) {
+						JOptionPane.showMessageDialog(null, "Invalid Start date", "Invlaid", JOptionPane.ERROR_MESSAGE);
+						txtMilestoneName.requestFocus(true);
+						txtMilestoneName.selectAll();
+					}
+//						else if (!Checking.validateEndDate(pm.getStart_date(), pm.getEnd_date())) {
+//						JOptionPane.showMessageDialog(null, "Task Name have all digit", "Invlaid",
+//								JOptionPane.ERROR_MESSAGE);
+//						txtMilestoneName.requestFocus(true);
+//						txtMilestoneName.selectAll();
+//					}
 
 					else {
 
@@ -297,6 +308,11 @@ public class MilestoneView extends JFrame {
 					} else if (Checking.IsAllDigit(pm.getName())) {
 						JOptionPane.showMessageDialog(null, "Company Name have all digit", "Invlaid",
 								JOptionPane.ERROR_MESSAGE);
+						txtMilestoneName.requestFocus(true);
+						txtMilestoneName.selectAll();
+					}
+					else if (!Checking.validateFutureDate(pm.getDue_date())) {
+						JOptionPane.showMessageDialog(null, "Invalid Start date", "Invlaid", JOptionPane.ERROR_MESSAGE);
 						txtMilestoneName.requestFocus(true);
 						txtMilestoneName.selectAll();
 					}

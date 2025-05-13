@@ -1,5 +1,7 @@
 package config;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -7,114 +9,165 @@ import javax.swing.JOptionPane;
 public class Checking {
 	@SuppressWarnings("deprecation")
 	public static boolean IsValidName(String str) {
-		if(Character.isSpace(str.charAt(0))) {
+		if (Character.isSpace(str.charAt(0))) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}
-	
+
 	public static boolean IsEmailformat(String str) {
 		boolean b = false;
 		int dot = str.lastIndexOf(".");
 		int at = str.indexOf("@");
-		if((dot<0) || (at <0) ||(str.indexOf(" ")>0)) {
+		if ((dot < 0) || (at < 0) || (str.indexOf(" ") > 0)) {
 			return b;
 		}
-		String st = str.substring(0,at);
-		String st1 = str.substring(dot+1);
-		if(!st.trim().equals("")&&(st1.equals("com"))) {
+		String st = str.substring(0, at);
+		String st1 = str.substring(dot + 1);
+		if (!st.trim().equals("") && (st1.equals("com"))) {
 			b = true;
 			return b;
-		}else {
+		} else {
 			return b;
 		}
-		
+
 	}
-	
+
 	public static boolean isPhoneNo(String str) {
-		if(str !=null && str.length()<=11) {
+		if (str != null && str.length() <= 11) {
 			return str.startsWith("09");
 		}
 		return false;
 	}
-	
+
 	public static boolean IsAllDigit(String str) {
-	    if (str == null || str.isEmpty()) return false;
-	    
-	    for (int i = 0; i < str.length(); i++) {
-	        if (!Character.isDigit(str.charAt(i))) {
-	            return false;
-	        }
-	    }
-	    return true;
+		if (str == null || str.isEmpty())
+			return false;
+
+		for (int i = 0; i < str.length(); i++) {
+			if (!Character.isDigit(str.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
 	}
-	
-	public static boolean IsContain(String s,Vector str) {
-		for(int i=0; i<str.size(); i++) {
-			if(s.equals((String)str.elementAt(i))) {
+
+	public static boolean IsContain(String s, Vector str) {
+		for (int i = 0; i < str.size(); i++) {
+			if (s.equals((String) str.elementAt(i))) {
 				return true;
 			}
-			
+
 		}
 		return false;
 	}
+
 	public static boolean checktxtquantity(String strqp) {
-		if(strqp.equals("")) {
+		if (strqp.equals("")) {
 			JOptionPane.showMessageDialog(null, "You must enter the Quantity");
 			return false;
-		}else if(IsAllDigit(strqp)) {
+		} else if (IsAllDigit(strqp)) {
 			JOptionPane.showMessageDialog(null, "You must enter NUMBER for Quantity");
 			return false;
-		}else if(Integer.parseInt(strqp)>10000) {
+		} else if (Integer.parseInt(strqp) > 10000) {
 			JOptionPane.showMessageDialog(null, "The Quantity you entered is too many to purchase!");
 			return false;
-		}else {
+		} else {
 			return true;
 		}
 	}
-	
+
 	public static boolean checktxtprice(String strqp) {
 		System.out.println(strqp);
-		if(strqp.equals("")) {
+		if (strqp.equals("")) {
 			JOptionPane.showMessageDialog(null, "You must enter the Price");
 			return false;
-		}else if(IsAllDigit(strqp)) {
+		} else if (IsAllDigit(strqp)) {
 			JOptionPane.showMessageDialog(null, "You must enter NUMBER the Price");
 			return false;
-		}else if(Long.parseLong(strqp)>1000000000) {
+		} else if (Long.parseLong(strqp) > 1000000000) {
 			JOptionPane.showMessageDialog(null, "The Price you entered is too much(more than 1,000,000,000)");
 			return false;
-		}else {
+		} else {
 			return true;
 		}
 	}
-	
-	public static String Sumamount(Vector data,int t) {
-		long sum =0;
-		for(int i=0;i<data.size(); i++) {
-			sum += Long.parseLong((String)data.elementAt(i));
-			//sum 10000
-			//str 000,01
+
+	public static boolean validateFutureDate(String selectedDate) {
+		boolean result = false;
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			sdf.setLenient(false); // Strict parsing
+
+			// Parse the input string to a Date
+			Date selected = (Date) sdf.parse(selectedDate);
+
+			// Get today's date and format it to remove time
+			Date now = new Date();
+			String formattedToday = sdf.format(now);
+			Date today = (Date) sdf.parse(formattedToday);
+
+			System.out.println("Selected: " + selected);
+			System.out.println("Today   : " + today);
+
+			// Compare the two dates
+			result = !selected.before(today); // true if today or future
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Invalid date format!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
-		if(t==1) {
-			int len = String.valueOf(sum).length(),index =0;
+		return result;
+	}
+
+	public static boolean validateEndDate(String startDate, String endDate) {
+		boolean result = false;
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			sdf.setLenient(false); // Strict parsing
+
+			// Parse the input string to a Date
+			Date selected = (Date) sdf.parse(endDate);
+
+			// Get today's date and format it to remove time
+
+			Date started = (Date) sdf.parse(startDate);
+
+			System.out.println("end: " + selected);
+			System.out.println("start   : " + started);
+
+			// Compare the two dates
+			result = !selected.before(started); // true if today or future
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Invalid date format!", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		return result;
+	}
+
+	public static String Sumamount(Vector data, int t) {
+		long sum = 0;
+		for (int i = 0; i < data.size(); i++) {
+			sum += Long.parseLong((String) data.elementAt(i));
+			// sum 10000
+			// str 000,01
+		}
+		if (t == 1) {
+			int len = String.valueOf(sum).length(), index = 0;
 			StringBuffer str = new StringBuffer("");
-			for(int i=0; i<len;i++) {
-				if(index==3) {
+			for (int i = 0; i < len; i++) {
+				if (index == 3) {
 					str.append(",");
 					index = 0;
 					i--;
-				}else {
-					str.append(String.valueOf(sum).charAt(len-i-1));
+				} else {
+					str.append(String.valueOf(sum).charAt(len - i - 1));
 					index++;
 				}
 			}
-			return str.reverse().toString();//10,000
-		}else {
+			return str.reverse().toString();// 10,000
+		} else {
 			return String.valueOf(sum);
 		}
-		
+
 	}
-	
+
 }

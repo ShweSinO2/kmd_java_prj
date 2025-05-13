@@ -1,9 +1,11 @@
 package controller;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,9 +69,9 @@ public class TaskController {
 			ps.setInt(8, dain.getPriority_id());
 			ps.setInt(9, dain.getType_id());
 			ps.setInt(10, dain.getTask_id());
-			
+
 			result = ps.executeUpdate();
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,6 +85,7 @@ public class TaskController {
 		String sql = "delete from pj_management.task where task_id=?";
 		try {
 			PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+//			System.out.println("task id:"+ dain.getTask_id());
 			ps.setInt(1, dain.getTask_id());
 			result = ps.executeUpdate();
 		} catch (SQLException e) {
@@ -90,6 +93,7 @@ public class TaskController {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Delete Fail,Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
 		}
+//		System.out.println(result);
 		return result;
 	}
 
@@ -128,32 +132,29 @@ public class TaskController {
 		}
 		return list;
 	}
-	
-	public String returnPjName(int milestoneId)
-	{
+
+	public String returnPjName(int milestoneId) {
 		String sql = "select * from project j join milestone m on j.project_id = m.project_id where m.milestone_id=?";
 		String name = null;
 		try {
-		        PreparedStatement ps = con.prepareStatement(sql);
-		        ps.setInt(1, milestoneId);
-		        ResultSet rs = ps.executeQuery();
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, milestoneId);
+			ResultSet rs = ps.executeQuery();
 //		        comboBox.removeAllItems();
 //		        comboBox.addItem("-Select-");
 //		        dataMap.clear();
-		        
-		        while (rs.next()) {
-		             name = rs.getString("j.project_name");
-		            
 
-		        }
-		        
-		    } catch (SQLException e) {
-		        e.printStackTrace();
-		    }
+			while (rs.next()) {
+				name = rs.getString("j.project_name");
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return name;
 	}
-	
-	
+
 //	public void updateTask(int status_id,int task_id)
 //	{
 //		String sql="update task set status_id=? where task_id=? ";
@@ -168,6 +169,33 @@ public class TaskController {
 //	    }
 //		System.out.println("Update successful! ");
 //	}
+
+	public List<TaskModel> selectone(TaskModel dain) throws SQLException {
+		List<TaskModel> list = new ArrayList<TaskModel>();
+		String sql = "select * from pj_management.task where assigned_by_id like ? and status_id = ? order by task_id";
+		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ps.setString(1, dain.getAssigned_id() + "%");
+		ps.setInt(2, dain.getStatus_id());
+		System.out.println(dain.getStart_date());
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			TaskModel cs = new TaskModel();
+			cs.setTask_id(rs.getInt("task_id"));
+			cs.setTask_name(rs.getString("task_name"));
+			cs.setDescription(rs.getString("description"));
+			cs.setStart_date(rs.getString("start_date"));
+			cs.setEnd_date(rs.getString("end_date"));
+			cs.setStatus_id(rs.getInt("status_id"));
+			cs.setMilestone_id(rs.getInt("milestone_id"));
+			cs.setAssigned_id(rs.getString("assigned_by_id"));
+			cs.setPriority_id(rs.getInt("priority_id"));
+			cs.setType_id(rs.getInt("type_id"));
+			cs.setTask_id(rs.getInt("task_id"));
+//			cs.setProject_id(rs.getInt("project_id"));
+			list.add(cs);
+		}
+		return list;
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

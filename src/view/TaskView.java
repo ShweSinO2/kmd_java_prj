@@ -21,6 +21,8 @@ import model.TaskModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,7 +50,8 @@ public class TaskView extends JFrame {
 	private JComboBox cboAssigned;
 	private JComboBox cboPriority;
 	private JComboBox cboType;
-	String Task_id = null;
+	private JComboBox cboStatusToSearch;
+//	String Task_id = null;
 	Map<String, Integer> ProjectMap = new HashMap<>();
 	Map<String, Integer> MilestoneMap = new HashMap<>();
 	Map<String, String> AssignedMap = new HashMap<>();
@@ -57,6 +60,7 @@ public class TaskView extends JFrame {
 	Map<String, Integer> TypeMap = new HashMap<>();
 
 	private JTextField txtDescription;
+	private JTextField txtShowAll;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -86,14 +90,16 @@ public class TaskView extends JFrame {
 
 		JPanel formPanel = new JPanel();
 		formPanel.setBounds(10, 0, 661, 324);
-		formPanel.setBackground(new Color(255, 255, 255));
+		formPanel.setBackground(new Color(255, 228, 181));
 
 		JLabel lblTaskName = new JLabel("Name:");
 		lblTaskName.setBounds(20, 11, 80, 30);
 		txtTaskName = new JTextField();
+		txtTaskName.setBackground(Color.WHITE);
 		txtTaskName.setBounds(101, 11, 200, 30);
 
 		tblTask = new JTable();
+		tblTask.setBackground(new Color(255, 204, 153));
 		tblTask.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -103,8 +109,8 @@ public class TaskView extends JFrame {
 
 				// update row for task
 //				if(column != 8) {
-				Task_id = (String) tblTask.getValueAt(row, 0);
-				pm.setMilestone_id(Integer.parseInt(Task_id));
+				String Task_id = (String) tblTask.getValueAt(row, 0);
+				pm.setTask_id(Integer.parseInt(Task_id));
 				txtTaskName.setText((String) tblTask.getValueAt(row, 1));
 				txtDescription.setText((String) tblTask.getValueAt(row, 2));
 
@@ -301,6 +307,7 @@ public class TaskView extends JFrame {
 
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 					String formattedStartDate = sdf.format(txtStartDate.getDate());
+
 					pm.setStart_date(formattedStartDate);
 
 					String formattedEndDate = sdf.format(txtEndDate.getDate());
@@ -335,6 +342,15 @@ public class TaskView extends JFrame {
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
 					} else if (Checking.IsAllDigit(pm.getTask_name())) {
+						JOptionPane.showMessageDialog(null, "Task Name have all digit", "Invlaid",
+								JOptionPane.ERROR_MESSAGE);
+						txtTaskName.requestFocus(true);
+						txtTaskName.selectAll();
+					} else if (!Checking.validateFutureDate(pm.getStart_date())) {
+						JOptionPane.showMessageDialog(null, "Invalid Start date", "Invlaid", JOptionPane.ERROR_MESSAGE);
+						txtTaskName.requestFocus(true);
+						txtTaskName.selectAll();
+					} else if (!Checking.validateEndDate(pm.getStart_date(), pm.getEnd_date())) {
 						JOptionPane.showMessageDialog(null, "Task Name have all digit", "Invlaid",
 								JOptionPane.ERROR_MESSAGE);
 						txtTaskName.requestFocus(true);
@@ -438,21 +454,29 @@ public class TaskView extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
+					} else if (!Checking.validateFutureDate(pm.getStart_date())) {
+						JOptionPane.showMessageDialog(null, "Invalid Start date", "Invlaid", JOptionPane.ERROR_MESSAGE);
+						txtTaskName.requestFocus(true);
+						txtTaskName.selectAll();
+					} else if (!Checking.validateEndDate(pm.getStart_date(), pm.getEnd_date())) {
+						JOptionPane.showMessageDialog(null, "Task Name have all digit", "Invlaid",
+								JOptionPane.ERROR_MESSAGE);
+						txtTaskName.requestFocus(true);
+						txtTaskName.selectAll();
 					}
 
 					else {
 
-						try {							
-								int rs = pc.update(pm);
-								System.out.println(rs);
-								if (rs == 1) {
-									JOptionPane.showMessageDialog(null, "Update Successfully", "Successfully",
-											JOptionPane.INFORMATION_MESSAGE);
-									clear();
-									showList();
+						try {
+							int rs = pc.update(pm);
+							System.out.println(rs);
+							if (rs == 1) {
+								JOptionPane.showMessageDialog(null, "Update Successfully", "Successfully",
+										JOptionPane.INFORMATION_MESSAGE);
+								clear();
+								showList();
 							}
 
-							
 						} catch (HeadlessException e1) {
 //					// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -536,6 +560,36 @@ public class TaskView extends JFrame {
 		showList();
 
 		btnUpdate.setEnabled(false);
+
+		JLabel lblTaskName_4_1 = new JLabel("Search");
+		lblTaskName_4_1.setBounds(348, 269, 80, 30);
+		formPanel.add(lblTaskName_4_1);
+
+		txtShowAll = new JTextField();
+		txtShowAll.setBounds(389, 269, 142, 30);
+		formPanel.add(txtShowAll);
+		
+		cboStatusToSearch = new JComboBox();
+		MySqlQuery.addCoboBox("status", "status_id", "status_name", cboStatusToSearch, StatusMap);
+		cboStatusToSearch.setBounds(588, 269, 73, 30);
+		formPanel.add(cboStatusToSearch);
+
+		txtShowAll.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					if (txtShowAll.getText().toString().trim().equals("")) {
+						showList();
+					} else {
+
+						showListOne();
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 
 	}
 
@@ -664,7 +718,7 @@ public class TaskView extends JFrame {
 				MySqlQuery.getComboData("milestone", "milestone_id", "milestone_name", MilestoneMap);
 
 				data[0] = Integer.toString(pm.getTask_id());
-				;
+
 				data[1] = pm.getTask_name();
 				data[2] = pm.getDescription();
 				data[3] = pm.getStart_date();
@@ -681,6 +735,37 @@ public class TaskView extends JFrame {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	public void showListOne() throws SQLException {
+		String data[] = new String[12];
+		TaskController cc = new TaskController();
+		TaskModel cm = new TaskModel();
+		String assigned_name = txtShowAll.getText().toString().trim();
+		String status_name=(String) cboStatus.getSelectedItem().toString();
+		System.out.println(assigned_name);
+		System.out.println(status_name);
+		cm.setAssigned_id(getIDbyName(AssignedMap, assigned_name));
+		cm.setStatus_id(getIDbyNamev1(StatusMap, status_name));
+		List<TaskModel> list = cc.selectone(cm);
+		dtm.setRowCount(0);
+		for (TaskModel c : list) {
+
+			data[0] = Integer.toString(c.getTask_id());
+
+			data[1] = c.getTask_name();
+			data[2] = c.getDescription();
+			data[3] = c.getStart_date();
+			data[4] = c.getEnd_date();
+			data[5] = cc.returnPjName(c.getMilestone_id());
+			data[6] = getNameById(MilestoneMap, c.getMilestone_id());
+			data[7] = getNameById1(AssignedMap, c.getAssigned_id());
+			data[8] = getNameById(StatusMap, c.getStatus_id());
+			data[9] = getNameById(PriorityMap, c.getPriority_id());
+			data[10] = getNameById(TypeMap, c.getType_id());
+			data[11] = "Delete";
+			dtm.addRow(data);
 		}
 	}
 
@@ -701,5 +786,23 @@ public class TaskView extends JFrame {
 			}
 		}
 		return null;
+	}
+
+	public static String getIDbyName(Map<String, String> map, String name) {
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			if (entry.getKey().equals(name)) {
+				return entry.getValue();
+			}
+		}
+		return null;
+	}
+	
+	public static int getIDbyNamev1(Map<String, Integer> map, String sts_name) {
+		for (Map.Entry<String, Integer> entry : map.entrySet()) {
+			if (entry.getKey().equals(sts_name)) {
+				return entry.getValue();
+			}
+		}
+		return 0;
 	}
 }
