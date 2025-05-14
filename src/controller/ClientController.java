@@ -138,7 +138,7 @@ public class ClientController {
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ps.setString(1, "%" + dain.getName() + "%");
 		ResultSet rs = ps.executeQuery();
-		if (rs.next()) {
+		while (rs.next()) {
 			ClientModel cs = new ClientModel();
 			cs.setClient_id(rs.getInt("client_id"));
 			cs.setName(rs.getString("name"));

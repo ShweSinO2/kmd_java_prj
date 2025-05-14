@@ -108,9 +108,6 @@ public class Checking {
 			String formattedToday = sdf.format(now);
 			Date today = (Date) sdf.parse(formattedToday);
 
-			System.out.println("Selected: " + selected);
-			System.out.println("Today   : " + today);
-
 			// Compare the two dates
 			result = !selected.before(today); // true if today or future
 		} catch (Exception e) {

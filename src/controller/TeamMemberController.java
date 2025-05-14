@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import config.DBConfig;
 import model.AttachmentModel;
 import model.ProjectModel;
+import model.TaskModel;
 import model.TeamMemberModel;
 
 public class TeamMemberController {
@@ -32,6 +33,27 @@ public class TeamMemberController {
 		List<TeamMemberModel> list = new ArrayList<TeamMemberModel>();
 		String sql = "select * from pj_management.team_member order by team_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			TeamMemberModel tmm = new TeamMemberModel();
+			tmm.setTeam_id(rs.getInt("team_id"));
+			tmm.setEmployee_id(rs.getString("employee_id"));
+			tmm.setPosition(rs.getString("position"));
+			list.add(tmm);
+		}
+		return list;
+	}
+	
+	public List<TeamMemberModel> selectone(TeamMemberModel dain) throws SQLException {
+		List<TeamMemberModel> list = new ArrayList<TeamMemberModel>();
+		
+		String sql = "";
+		PreparedStatement ps;
+		
+		sql = "select * from pj_management.team_member where team_id = ? order by team_id asc";
+		ps = (PreparedStatement) con.prepareStatement(sql);
+		ps.setInt(1, dain.getTeam_id());
+				
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			TeamMemberModel tmm = new TeamMemberModel();

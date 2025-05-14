@@ -107,7 +107,7 @@ public class ProjectController {
 
 	public List<ProjectModel> selectall() throws SQLException {
 		List<ProjectModel> list = new ArrayList<ProjectModel>();
-		String sql = "select * from pj_management.project order by project_id desc, status_id desc";
+		String sql = "select * from pj_management.project order by status_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
@@ -129,7 +129,7 @@ public class ProjectController {
 		List<ProjectModel> list = new ArrayList<ProjectModel>();
 		String sql = "SELECT * FROM pj_management.project "
 				+ "WHERE end_date BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY) "
-				+ "ORDER BY project_id DESC";
+				+ "ORDER BY status_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
@@ -149,11 +149,11 @@ public class ProjectController {
 	
 	public List<ProjectModel> selectone(ProjectModel dain) throws SQLException {
 		List<ProjectModel> list = new ArrayList<ProjectModel>();
-		String sql = "select * from pj_management.project where project_name like ? order by project_id";
+		String sql = "select * from pj_management.project where project_name like ? order by status_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
-		ps.setString(1, dain.getProject_name() + "%");
+		ps.setString(1, "%" + dain.getProject_name() + "%");
 		ResultSet rs = ps.executeQuery();
-		if (rs.next()) {
+		while (rs.next()) {
 			ProjectModel pm = new ProjectModel();
 			pm.setProject_id(rs.getInt("project_id"));
 			pm.setProject_name(rs.getString("project_name"));

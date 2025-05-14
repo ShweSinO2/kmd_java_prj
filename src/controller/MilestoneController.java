@@ -99,7 +99,7 @@ public class MilestoneController {
 
 	public List<MilestoneModel> selectall() throws SQLException {
 		List<MilestoneModel> list = new ArrayList<MilestoneModel>();
-		String sql = "select * from pj_management.milestone order by milestone_id asc";
+		String sql = "select * from pj_management.milestone order by status_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
@@ -117,11 +117,11 @@ public class MilestoneController {
 
 	public List<MilestoneModel> selectone(MilestoneModel dain) throws SQLException {
 		List<MilestoneModel> list = new ArrayList<MilestoneModel>();
-		String sql = "select * from pj_management.milestone where milestone_name like ? order by milestone_id";
+		String sql = "select * from pj_management.milestone where milestone_name like ? order by status_id asc";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
-		ps.setString(1, dain.getName() + "%");
+		ps.setString(1,  "%" + dain.getName() + "%");
 		ResultSet rs = ps.executeQuery();
-		if (rs.next()) {
+		while (rs.next()) {
 			MilestoneModel cs = new MilestoneModel();
 			cs.setMilestone_id(rs.getInt("milestone_id"));
 			cs.setName(rs.getString("milestone_name"));

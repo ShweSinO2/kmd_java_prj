@@ -90,7 +90,8 @@ public class TaskView extends JFrame {
 
 		JPanel formPanel = new JPanel();
 		formPanel.setBounds(10, 0, 661, 324);
-		formPanel.setBackground(new Color(255, 228, 181));
+//		formPanel.setBackground(new Color(255, 228, 181));
+		formPanel.setBackground(new Color(255, 255, 255));
 
 		JLabel lblTaskName = new JLabel("Name:");
 		lblTaskName.setBounds(20, 11, 80, 30);
@@ -99,7 +100,7 @@ public class TaskView extends JFrame {
 		txtTaskName.setBounds(101, 11, 200, 30);
 
 		tblTask = new JTable();
-		tblTask.setBackground(new Color(255, 204, 153));
+		tblTask.setBackground(new Color(255, 255, 255));
 		tblTask.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -661,8 +662,8 @@ public class TaskView extends JFrame {
 
 				// Style the label like a button
 				label.setPreferredSize(new Dimension(30, 15));
-//				label.setBackground(new Color(255, 255, 255));
-				label.setBackground(new Color(255, 204, 153));
+				label.setBackground(new Color(255, 255, 255));
+//				label.setBackground(new Color(255, 204, 153));
 				label.setForeground(new Color(220, 53, 69));
 				label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 				label.setFont(new Font("Arial", Font.BOLD, 12));

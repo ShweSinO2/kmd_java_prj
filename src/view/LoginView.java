@@ -177,11 +177,9 @@ public class LoginView extends JFrame{
 					em.setEmployee_name(txtUsername.getText().toString());
 					em.setPassword(txtPassword.getText().toString());
 					try {
-						System.out.println("---------");
 						if(ec.loginState(em))
 						{
 							
-							System.out.println(ec.loginState(em));
 							dispose();
 							ProjectView prjFrame = new ProjectView();
 							prjFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);

@@ -28,9 +28,11 @@ import javax.swing.table.TableColumn;
 import config.MySqlQuery;
 import controller.AttachmentController;
 import controller.ProjectController;
+import controller.TaskController;
 import controller.TeamMemberController;
 import model.AttachmentModel;
 import model.ProjectModel;
+import model.TaskModel;
 import model.TeamMemberModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -45,6 +47,7 @@ public class TeamMember extends JFrame {
 	private JComboBox<String> cboEmployee;
 	private JComboBox cboTeam;
 	private JComboBox cboPosition;
+	private JComboBox cboTeamSearch;
 	Map<String, Integer> teamMap = new HashMap<>();
 	Map<String, String> employeeMap = new HashMap<>();
 
@@ -307,6 +310,29 @@ public class TeamMember extends JFrame {
 		
 		btnUpdate.setEnabled(false);
 		
+		cboTeamSearch = new JComboBox();
+		MySqlQuery.addCoboBox("team", "team_id", "team_name", cboTeamSearch, teamMap);
+		cboTeamSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (cboTeamSearch.getSelectedIndex() == 0) {
+						showList();
+					} else {
+						showListOne();
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		cboTeamSearch.setBounds(980, 81, 120, 31);
+		formPanel.add(cboTeamSearch);
+		
+		JLabel lblNewLabel_2 = new JLabel("Search");
+		lblNewLabel_2.setBounds(920, 89, 46, 14);
+		formPanel.add(lblNewLabel_2);
+		
 		getContentPane().add(rightPanel, BorderLayout.CENTER);
 	}
 	
@@ -425,6 +451,35 @@ public class TeamMember extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void showListOne() throws SQLException {
+		String data[] = new String[4];
+		TeamMemberController tmc = new TeamMemberController();
+		TeamMemberModel cm = new TeamMemberModel();
+	
+		String name=(String) cboTeamSearch.getSelectedItem().toString();
+		
+		cm.setTeam_id(getIDbyNamev1(teamMap, name));
+	
+		List<TeamMemberModel> list = tmc.selectone(cm);
+		dtm.setRowCount(0);
+		for (TeamMemberModel tmm : list) {
+			data[0] = getNameByEmployeeId(employeeMap, tmm.getEmployee_id());
+			data[1] = getNameById(teamMap, tmm.getTeam_id());
+			data[2] = tmm.getPosition();
+			data[3] = "Delete";
+			dtm.addRow(data);
+		}
+	}
+	
+	public static int getIDbyNamev1(Map<String, Integer> map, String sts_name) {
+		for (Map.Entry<String, Integer> entry : map.entrySet()) {
+			if (entry.getKey().equals(sts_name)) {
+				return entry.getValue();
+			}
+		}
+		return 0;
 	}
 	
 	//get id from database and show name by Id
