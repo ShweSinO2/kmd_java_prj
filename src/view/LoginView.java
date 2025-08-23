@@ -9,6 +9,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import config.MySqlQuery;
 import controller.EmployeeController;
 import model.EmployeeModel;
 
@@ -42,6 +43,7 @@ class BackgroundPanel extends JPanel {
 }
 
 public class LoginView extends JFrame{
+	MySqlQuery sqlquery = new MySqlQuery();
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
 	public LoginView() {
@@ -174,16 +176,24 @@ public class LoginView extends JFrame{
 				{
 					EmployeeController ec=new EmployeeController();
 					EmployeeModel em=new EmployeeModel();
-					em.setEmployee_name(txtUsername.getText().toString());
-					em.setPassword(txtPassword.getText().toString());
+					String username = txtUsername.getText().toString();
+					String password = txtPassword.getText().toString();
+					em.setEmployee_name(username);
+					em.setPassword(password);
 					try {
 						if(ec.loginState(em))
 						{
+                            String[] querySeeker = MySqlQuery.getLoginUser(em.getEmployee_name(), em.getPassword());
+                            System.out.println("______Login______");
+                            System.out.println(querySeeker[0]);
+                            System.out.println(querySeeker[1]);
+                            System.out.println("______Login______");
+
 							
-							dispose();
-							ProjectView prjFrame = new ProjectView();
+							ProjectView prjFrame = new ProjectView(username,password);
 							prjFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 							prjFrame.setVisible(true);
+							dispose();
 						}
 						else
 						{

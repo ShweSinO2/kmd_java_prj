@@ -132,6 +132,31 @@ public class TaskController {
 		}
 		return list;
 	}
+	
+	//get data for login user task only
+	public List<TaskModel> selectsingle(String employeeid) throws SQLException {
+		List<TaskModel> list = new ArrayList<TaskModel>();
+		String sql = "select * from pj_management.task where assigned_by_id =? order by status_id asc";
+		PreparedStatement ps = (PreparedStatement) con.prepareStatement(sql);
+		ps.setString(1, employeeid);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			TaskModel pm = new TaskModel();
+			pm.setTask_id(rs.getInt("task_id"));
+			pm.setTask_name(rs.getString("task_name"));
+			pm.setDescription(rs.getString("description"));
+			pm.setStart_date(rs.getString("start_date"));
+			pm.setEnd_date(rs.getString("end_date"));
+			pm.setStatus_id(rs.getInt("status_id"));
+			pm.setMilestone_id(rs.getInt("milestone_id"));
+			pm.setAssigned_id(rs.getString("assigned_by_id"));
+			pm.setPriority_id(rs.getInt("priority_id"));
+			pm.setType_id(rs.getInt("type_id"));
+			list.add(pm);
+		}
+		return list;
+	}
+
 
 	public String returnPjName(int milestoneId) {
 		String sql = "select * from project j join milestone m on j.project_id = m.project_id where m.milestone_id=?";

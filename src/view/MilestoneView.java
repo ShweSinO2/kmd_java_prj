@@ -48,21 +48,25 @@ public class MilestoneView extends JFrame {
 	Map<String, Integer> projectMap = new HashMap<>();
 	private JTextField txtShowAll;
 	private JLabel lblSearch;
+	String username,password;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			MilestoneView mstFrame = new MilestoneView();
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			mstFrame.setBounds(0, 0, screenSize.width, screenSize.height);
-			mstFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			mstFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			MilestoneView mstFrame = new MilestoneView();
+//			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//			mstFrame.setBounds(0, 0, screenSize.width, screenSize.height);
+//			mstFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			mstFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
-	public MilestoneView() {
+	public MilestoneView(String username,String password) {
+		this.username = username;
+		this.password = password;
+		
 		setTitle("Milestone");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(900, 600);
@@ -70,7 +74,7 @@ public class MilestoneView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("MilestoneView");
+		SideMenuPanel sideMenu = new SideMenuPanel(username,password,"MilestoneView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();

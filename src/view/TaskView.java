@@ -61,21 +61,29 @@ public class TaskView extends JFrame {
 
 	private JTextField txtDescription;
 	private JTextField txtShowAll;
+	String username,password,employee_id;
+	int role_id;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			TaskView taskFrame = new TaskView();
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			taskFrame.setBounds(0, 0, screenSize.width, screenSize.height);
-			taskFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			taskFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			TaskView taskFrame = new TaskView();
+//			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//			taskFrame.setBounds(0, 0, screenSize.width, screenSize.height);
+//			taskFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			taskFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
-	public TaskView() {
+	public TaskView(String username,String password) {
+		this.username = username;
+		this.password = password;
+		String[] querySeeker = MySqlQuery.getLoginUser(this.username, this.password);
+	    this.role_id = Integer.parseInt(querySeeker[1]);
+	    this.employee_id = querySeeker[2];
+	    
 		setTitle("Task");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(900, 600);
@@ -83,7 +91,7 @@ public class TaskView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("TaskView");
+		SideMenuPanel sideMenu = new SideMenuPanel(username,password,"TaskView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();
@@ -171,7 +179,7 @@ public class TaskView extends JFrame {
 								JOptionPane.showMessageDialog(null, "Delete Successfully", "Successfully",
 										JOptionPane.INFORMATION_MESSAGE);
 //								AutoID();
-								showList();
+								showList(role_id,employee_id);
 								clear();
 
 							} else {
@@ -378,7 +386,7 @@ public class TaskView extends JFrame {
 									JOptionPane.showMessageDialog(null, "Save Successfully", "Successfully",
 											JOptionPane.INFORMATION_MESSAGE);
 //							AutoID();
-									showList();
+									showList(role_id,employee_id);
 									clear();
 								}
 
@@ -475,7 +483,7 @@ public class TaskView extends JFrame {
 								JOptionPane.showMessageDialog(null, "Update Successfully", "Successfully",
 										JOptionPane.INFORMATION_MESSAGE);
 								clear();
-								showList();
+								showList(role_id,employee_id);
 							}
 
 						} catch (HeadlessException e1) {
@@ -558,7 +566,7 @@ public class TaskView extends JFrame {
 		getContentPane().add(rightPanel, BorderLayout.CENTER);
 
 		createTable();
-		showList();
+		showList(role_id,employee_id);
 
 		btnUpdate.setEnabled(false);
 
@@ -579,7 +587,7 @@ public class TaskView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					if (txtShowAll.getText().toString().trim().equals("") && cboStatusToSearch.getSelectedIndex() == 0) {
-						showList();
+						showList(role_id,employee_id);
 					} else {
 						showListOne();
 					}
@@ -708,14 +716,19 @@ public class TaskView extends JFrame {
 		cboStatusToSearch.setSelectedIndex(0);
 		txtTaskName.requestFocus(true);
 		
-		showList();
+		showList(role_id,employee_id);
 	}
 
-	public void showList() {
+	public void showList(int role_id,String employee_id) {
 		String data[] = new String[12];
 		TaskController pc = new TaskController();
 		try {
-			List<TaskModel> list = pc.selectall();
+			List<TaskModel> list;
+			if (role_id == 3 || role_id == 4) {
+				list = pc.selectsingle(employee_id);
+			} else {
+				list = pc.selectall();
+			}
 			dtm.setRowCount(0);
 			for (TaskModel pm : list) {
 				MySqlQuery.getComboData2("employee", "employee_id", "name", AssignedMap);

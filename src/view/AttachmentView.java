@@ -61,6 +61,7 @@ public class AttachmentView extends JFrame {
 	Map<String, Integer> projectMap = new HashMap<>();
 	Map<String, Integer> taskMap = new HashMap<>();
 	Map<String, Integer> dataMap = new HashMap<>();
+	String username,password;
 	
 	public static Connection con = null;
 	static {
@@ -74,14 +75,22 @@ public class AttachmentView extends JFrame {
 		}
 	}
 
-	public AttachmentView() {
+	public AttachmentView(String username,String password) {
+		this.username = username;
+		this.password = password;
+		System.out.println("Username and Password");
+		System.out.println(this.username);
+		System.out.println(this.password);
+		
 		setTitle("File Upload/Download");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setVisible(true);
 		setSize(900, 600);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("AttachmentView");
+		SideMenuPanel sideMenu = new SideMenuPanel(this.username,this.password,"AttachmentView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();
@@ -574,15 +583,15 @@ public class AttachmentView extends JFrame {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			AttachmentView attachFrame = new AttachmentView();
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			attachFrame.setBounds(0, 0, screenSize.width, screenSize.height);
-			attachFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			attachFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			AttachmentView attachFrame = new AttachmentView();
+//			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//			attachFrame.setBounds(0, 0, screenSize.width, screenSize.height);
+//			attachFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			attachFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 	}
 }

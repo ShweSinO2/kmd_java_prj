@@ -55,22 +55,26 @@ public class EmployeeView extends JFrame {
 	private JTextField txtPhone;
 	private JTextField txtShowAll;
 	private JLabel lblSearch;
+	String username,password;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			EmployeeView empFrame = new EmployeeView();
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			empFrame.setBounds(0, 0, screenSize.width, screenSize.height);
-			empFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			empFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			EmployeeView empFrame = new EmployeeView();
+//			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//			empFrame.setBounds(0, 0, screenSize.width, screenSize.height);
+//			empFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			empFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 	}
 
-	public EmployeeView() {
+	public EmployeeView(String username,String password) {
+		this.username = username;
+		this.password = password;
+		
 		setTitle("Employee");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(900, 600);
@@ -78,7 +82,7 @@ public class EmployeeView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("EmployeeView");
+		SideMenuPanel sideMenu = new SideMenuPanel(username,password,"EmployeeView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();

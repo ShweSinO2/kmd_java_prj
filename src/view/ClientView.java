@@ -47,22 +47,29 @@ public class ClientView extends JFrame {
 	private JTextField txtCompanyAddress;
 	private JTextField txtPhone;
 	private JTextField txtShowAll;
+	String username,password;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			ClientView cltFrame = new ClientView();
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			cltFrame.setBounds(0, 0, screenSize.width, screenSize.height);
-			cltFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			cltFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			ClientView cltFrame = new ClientView();
+//			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//			cltFrame.setBounds(0, 0, screenSize.width, screenSize.height);
+//			cltFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			cltFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 	}
 
-	public ClientView() {
+	public ClientView(String username,String password) {
+		this.username = username;
+		this.password = password;
+		System.out.println("Username and Password");
+		System.out.println(this.username);
+		System.out.println(this.password);
+		
 		setTitle("Client");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(900, 600);
@@ -70,7 +77,7 @@ public class ClientView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("ClientView");
+		SideMenuPanel sideMenu = new SideMenuPanel(this.username,this.password,"ClientView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();

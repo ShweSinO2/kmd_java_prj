@@ -176,6 +176,29 @@ public class MySqlQuery {
 			e.printStackTrace();
 		}
 	}
+	
+	public static String[] getLoginUser(String username,String password) {
+		String sql = "select * from employee WHERE name = ? and password = ?";
+		String employee[] = new String[3];		
+		try {
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, username);
+			ps.setString(2, password);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				
+				employee[0] = rs.getString("phone"); //phone
+				employee[1] = Integer.toString(rs.getInt("role_id"));//role
+				employee[2] = rs.getString("employee_id");//employee_id
+
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return employee;
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

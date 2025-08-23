@@ -39,22 +39,26 @@ public class TeamView extends JFrame {
 	private JButton btnUpdate;
 	private JButton btnClear;
 	private JTextField txtTeamName;
+	String username,password;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			TeamView cltFrame = new TeamView();
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			cltFrame.setBounds(0, 0, screenSize.width, screenSize.height);
-			cltFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			cltFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			TeamView cltFrame = new TeamView();
+//			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//			cltFrame.setBounds(0, 0, screenSize.width, screenSize.height);
+//			cltFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			cltFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 	}
 
-	public TeamView() {
+	public TeamView(String username,String password) {
+		this.username = username;
+		this.password = password;
+		
 		setTitle("Team");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(900, 600);
@@ -62,7 +66,7 @@ public class TeamView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("TeamView");
+		SideMenuPanel sideMenu = new SideMenuPanel(username,password,"TeamView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();

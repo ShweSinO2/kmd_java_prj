@@ -54,28 +54,43 @@ public class ProjectView extends JFrame {
 	Map<String, Integer> teamMap = new HashMap<>();
 	Map<String, Integer> clientMap = new HashMap<>();
 	private JTextField txtShowAll;
+	String username,password,employee_id;
+	int role_id;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			ProjectView prjFrame = new ProjectView();
-			prjFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			prjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			prjFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			ProjectView prjFrame = new ProjectView();
+//			prjFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//			prjFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			prjFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
-	public ProjectView() {
+	public ProjectView(String username, String password) {
+		this.username = username;
+		this.password = password;
+        String[] querySeeker = MySqlQuery.getLoginUser(this.username, this.password);
+        this.role_id = Integer.parseInt(querySeeker[1]);
+	    this.employee_id = querySeeker[2];
+
+		System.out.println("_____Project______");
+		System.out.println(querySeeker[0]);
+		System.out.println(querySeeker[1]);
+		System.out.println("_____Project______");
+
+
 		setTitle("Project List");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setSize(900, 600);
 		setLocationRelativeTo(null);
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("ProjectView");
+		SideMenuPanel sideMenu = new SideMenuPanel(this.username,this.password,"ProjectView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();
@@ -88,11 +103,17 @@ public class ProjectView extends JFrame {
 		lblProjectName.setBounds(10, 11, 80, 30);
 		txtProjectName = new JTextField();
 		txtProjectName.setBounds(91, 11, 200, 30);
-
+		
 		tblProject = new JTable();
 		tblProject.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				//to return if login role is junior or senior
+				if (role_id == 3 || role_id == 4) {
+		            System.out.println("Role 3 or 4 detected, row click functionality is disabled.");
+		            return; // Exit the method immediately
+		        }
+				 
 				int row = tblProject.rowAtPoint(e.getPoint());
 		        int column = tblProject.columnAtPoint(e.getPoint());
 				ProjectModel pm = new ProjectModel();
@@ -162,7 +183,7 @@ public class ProjectView extends JFrame {
 		});
 		JScrollPane tableScrollPane = new JScrollPane(tblProject);
 		tableScrollPane.setBounds(23, 322, 661, 542);
-		tableScrollPane.getViewport().setBackground(new Color(255, 255, 255));
+//		tableScrollPane.getViewport().setBackground(new Color(255, 255, 255));
 		rightPanel.setLayout(null);
 
 		// Add to right panel
@@ -458,7 +479,20 @@ public class ProjectView extends JFrame {
 		});
 		txtShowAll.setBounds(890, 219, 200, 30);
 		formPanel.add(txtShowAll);
-
+		setVisible(true);
+		// 3 is Junior Programmer and 4 is Senior Programmer
+		  if (role_id == 3 || role_id == 4) {
+				btnSave.setEnabled(false);
+	            tblProject.setEnabled(false);
+	            tblProject.setBackground(new Color(240, 240, 240)); 
+	    		tableScrollPane.getViewport().setBackground(new Color(240, 240, 240));
+	            System.out.println("JTable is disabled for role_id: " + role_id);
+	        } else {
+				btnSave.setEnabled(true);
+	            tblProject.setEnabled(true);
+	    		tableScrollPane.getViewport().setBackground(new Color(255, 255, 255));
+	            System.out.println("JTable is enabled for role_id: " + role_id);
+	        }
 	}
 	
 	public void setColumnWidth(int index , int width)
@@ -470,6 +504,18 @@ public class ProjectView extends JFrame {
 	
     public void createTable()
 	{
+    	 // Override the DefaultTableModel to make cells non-editable
+        dtm = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Check if the current user is a programmer (role_id 3 or 4)
+                if (role_id == 3 || role_id == 4) {
+                    return false;
+                } else {
+                    return column != 8;
+                }
+            }
+        };
 	     dtm.addColumn("ID");
 	     dtm.addColumn("Name");
 	     dtm.addColumn("Description"); 
@@ -526,7 +572,11 @@ public class ProjectView extends JFrame {
 	            
 	            // Style the label like a button
 	            label.setPreferredSize(new Dimension(30, 15));
-	            label.setBackground(new Color(255, 255, 255));
+	            if(role_id == 3 || role_id == 4) {
+		            label.setBackground(new Color(240, 240, 240));
+	            } else {
+		            label.setBackground(new Color(255, 255, 255));
+	            }
           	  	label.setForeground(new Color(220, 53, 69));
           	  	label.setCursor(new Cursor(Cursor.HAND_CURSOR));            
 	            label.setFont(new Font("Arial", Font.BOLD, 12));
@@ -554,7 +604,11 @@ public class ProjectView extends JFrame {
 	}
 
 	public void clear() {
-		btnSave.setEnabled(true);
+		if(role_id == 3 || role_id == 4) {
+			btnSave.setEnabled(false);
+		} else {
+			btnSave.setEnabled(true);
+		}
 		btnUpdate.setEnabled(false);
 		txtProjectName.setText("");
 		txtDescription.setText("");

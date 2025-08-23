@@ -50,28 +50,32 @@ public class TeamMember extends JFrame {
 	private JComboBox cboTeamSearch;
 	Map<String, Integer> teamMap = new HashMap<>();
 	Map<String, String> employeeMap = new HashMap<>();
+	String username,password;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			TeamMember tmFrame = new TeamMember();
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			tmFrame.setBounds(0, 0, screenSize.width, screenSize.height);
-			tmFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			tmFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			TeamMember tmFrame = new TeamMember();
+//			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//			tmFrame.setBounds(0, 0, screenSize.width, screenSize.height);
+//			tmFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			tmFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 	
-	public TeamMember() {
+	public TeamMember(String username,String password) {
+		this.username = username;
+		this.password = password;
+		
 		setTitle("Team Member");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(900, 600);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("TeamMember");
+		SideMenuPanel sideMenu = new SideMenuPanel(username,password,"TeamMember");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		JPanel rightPanel = new JPanel();

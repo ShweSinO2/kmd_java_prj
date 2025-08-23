@@ -10,7 +10,7 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private JPanel contentPanel;
 
-    public MainFrame() {
+    public MainFrame(String username,String password) {
         setTitle("Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 600);
@@ -22,9 +22,9 @@ public class MainFrame extends JFrame {
         contentPanel = new JPanel(cardLayout);
 
         // Add different views
-        contentPanel.add(new ProjectView(), "Home");
+        contentPanel.add(new ProjectView(username,password), "Home");
         contentPanel.add(new LoginView(), "Employee");
-        contentPanel.add(new ProjectView(), "Project");
+        contentPanel.add(new ProjectView(username,password), "Project");
         contentPanel.add(new LoginView(), "Team");
 
         // Add side menu with button actions
@@ -39,6 +39,6 @@ public class MainFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
+//        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
     }
 }

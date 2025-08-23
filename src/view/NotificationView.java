@@ -19,20 +19,24 @@ public class NotificationView extends JFrame {
 	Map<String, Integer> statusMap = new HashMap<>();
 	Map<String, Integer> teamMap = new HashMap<>();
 	Map<String, Integer> clientMap = new HashMap<>();
+	String username,password;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		try {
-			NotificationView notiFrame = new NotificationView();
-			notiFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			notiFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			notiFrame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			NotificationView notiFrame = new NotificationView();
+//			notiFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//			notiFrame.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//			notiFrame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
-	public NotificationView() {
+	public NotificationView(String username,String password) {
+		this.username = username;
+		this.password = password;
+		
 		setTitle("Notification List");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(900, 600);
@@ -40,7 +44,7 @@ public class NotificationView extends JFrame {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		SideMenuPanel sideMenu = new SideMenuPanel("NotificationView");
+		SideMenuPanel sideMenu = new SideMenuPanel(username,password,"NotificationView");
 		getContentPane().add(sideMenu, BorderLayout.WEST);
 
 		rightPanel = new JPanel();

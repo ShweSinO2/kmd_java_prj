@@ -13,9 +13,12 @@ public class SideMenuPanel extends JPanel {
 	private CardLayout cardLayout;
 	private JPanel contentPanel;
 	private JButton activeButton = null;
+	String username,password;
     private final Map<String, JButton> buttonMap = new HashMap<>();
 
-	public SideMenuPanel(String activeViewName) {
+	public SideMenuPanel(String username,String password,String activeViewName) {
+		this.username = username;
+		this.password = password;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBackground(new Color(33, 37, 41));
 		setPreferredSize(new Dimension(200, 600));
@@ -127,31 +130,31 @@ public class SideMenuPanel extends JPanel {
 				frameToOpen = new LoginView();
 				break;
 			case "ProjectView":
-				frameToOpen = new ProjectView();
+				frameToOpen = new ProjectView(username,password);
 				break;
 			case "MilestoneView":
-				 frameToOpen = new MilestoneView();
+				 frameToOpen = new MilestoneView(username,password);
 				break;
 			case "TaskView":
-				 frameToOpen = new TaskView();
+				 frameToOpen = new TaskView(username,password);
 				break;
 			case "AttachmentView":
-				frameToOpen = new AttachmentView();
+				frameToOpen = new AttachmentView(username,password);
 				break;
 			case "ClientView":
-				frameToOpen = new ClientView();
+				frameToOpen = new ClientView(username,password);
 				break;
 			case "EmployeeView":
-				frameToOpen = new EmployeeView();
+				frameToOpen = new EmployeeView(username,password);
 				break;
 			case "TeamView":
-				frameToOpen = new TeamView();
+				frameToOpen = new TeamView(username,password);
 				break;
 			case "TeamMember":
-				frameToOpen = new TeamMember();
+				frameToOpen = new TeamMember(username,password);
 				break;
 			case "NotificationView":
-				 frameToOpen = new NotificationView();
+				 frameToOpen = new NotificationView(username,password);
 				break;
 			default:
 				JOptionPane.showMessageDialog(null, "Unknown view: " + viewName);
