@@ -53,9 +53,32 @@ public class SideMenuPanel extends JPanel {
 		addSpacer();
 		addButton("Notification", "NotificationView");
 		addSpacer();
-		addButton("Logout", "LoginView");
+//		addButton("Logout", "LoginView");
 
 		add(Box.createVerticalGlue());
+		
+		JLabel lblUsername = new JLabel("Logged in as: " + this.username);
+		lblUsername.setForeground(new Color(173, 216, 230)); // A light blue color
+		lblUsername.setFont(new Font("SansSerif", Font.ITALIC, 12));
+		lblUsername.setAlignmentX(Component.LEFT_ALIGNMENT);
+		lblUsername.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0));
+		add(lblUsername);
+
+		// Add Logout button with an icon
+		JButton logoutButton = createMenuButton("  Logout", "LoginView");
+		 logoutButton.setText("Logout");
+		try {
+            ImageIcon logoutIcon = new ImageIcon(getClass().getResource("/images/logout.png"));
+            Image image = logoutIcon.getImage();
+            Image scaledImage = image.getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            logoutButton.setIcon(new ImageIcon(scaledImage));
+        } catch (Exception e) {
+            System.err.println("Logout icon not found: " + e.getMessage());
+        }
+		logoutButton.setHorizontalTextPosition(SwingConstants.LEFT);
+	    logoutButton.setIconTextGap(5);
+        add(logoutButton);
+		buttonMap.put("LoginView", logoutButton);
 
 		// Activate the correct button initially
 		setInitialActiveButton(activeViewName);

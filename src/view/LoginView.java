@@ -109,30 +109,50 @@ public class LoginView extends JFrame{
 		innerPanel.add(txtPassword);
 		
 		// Eye toggle button
-		JButton toggleBtn = new JButton("\uD83D\uDC41");
-		toggleBtn.setBackground(new Color(64, 0, 64));
-		toggleBtn.setBounds(240, 164, 28, 28);
-		toggleBtn.setFocusable(false);
-		toggleBtn.setBorderPainted(false);
-		toggleBtn.setContentAreaFilled(false);
-		toggleBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        JButton toggleBtn = new JButton("\uD83D\uDC41");
+        toggleBtn.setBackground(new Color(64, 0, 64));
+        toggleBtn.setBounds(240, 164, 28, 28);
+        toggleBtn.setFocusable(false);
+        toggleBtn.setBorderPainted(false);
+        toggleBtn.setContentAreaFilled(false);
+        toggleBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-		innerPanel.add(toggleBtn);
+        innerPanel.add(toggleBtn);
 
-		// Toggle show/hide password
-//		toggleBtn.addActionListener(new ActionListener() {
-//		    private boolean showing = false;
-//
-//		    @Override
-//		    public void actionPerformed(ActionEvent e) {
-//		        if (showing) {
-//		            txtPassword.setEchoChar('•'); // hide
-//		        } else {
-//		            txtPassword.setEchoChar((char) 0); // show
-//		        }
-//		        showing = !showing;
-//		    }
-//		});
+        // Toggle show/hide password
+        toggleBtn.addActionListener(new ActionListener() {
+            private boolean showing = false;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (showing) {
+                    txtPassword.setEchoChar('•'); // hide
+                } else {
+                    txtPassword.setEchoChar((char) 0); // show
+                }
+                showing = !showing;
+            }
+        });
+
+     // Add the "Forgot Password" link
+        JLabel lblForgotPassword = new JLabel("Forgot password?");
+        lblForgotPassword.setForeground(new Color(153, 76, 0));
+        lblForgotPassword.setFont(new Font("SansSerif", Font.BOLD, 12));
+        lblForgotPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblForgotPassword.setBounds(180, 195, 100, 14); // Adjust bounds as needed
+        innerPanel.add(lblForgotPassword);
+
+        // Make the label clickable
+        lblForgotPassword.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Close the current LoginView
+                dispose();
+                // Open the new ForgotPasswordView
+                new ForgetPasswordView().setVisible(true);
+				dispose();
+            }
+        });
 		
 		JButton btnLogin = new JButton("Login");
 		
