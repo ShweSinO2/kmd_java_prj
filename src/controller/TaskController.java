@@ -236,20 +236,40 @@ public class TaskController {
 		return list;
 	}
 	
-	public boolean isStartDateConflict(String assignedId, String startDate) {
+	public boolean isStartDateConflict(String assignedId, String startDate, String action, int taskid) throws SQLException {
 	    boolean conflict = false;
-	    String sql = "SELECT * FROM pj_management.task WHERE assigned_by_id = ? AND start_date = ?";
-	    try {
+	    String sql;
+	    System.out.println("aaaa"+ action);
+	    if ("update".equals(action) ) {
+		    sql = "SELECT * FROM pj_management.task WHERE assigned_by_id = ? AND start_date = ? AND status_id != 5 AND task_id != ?";
 	        PreparedStatement ps = con.prepareStatement(sql);
-	        ps.setString(1, assignedId);
-	        ps.setString(2, startDate);
-	        ResultSet rs = ps.executeQuery();
-	        if (rs.next()) {
-	            conflict = true;
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
+		    try {
+		        ps.setString(1, assignedId);
+		        ps.setString(2, startDate);
+		        ps.setInt(3, taskid);
+		        ResultSet rs = ps.executeQuery();
+		        if (rs.next()) {
+		            conflict = true;
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+
+	    } else {
+		    sql = "SELECT * FROM pj_management.task WHERE assigned_by_id = ? AND start_date = ? AND status_id != 5";
+	        PreparedStatement ps = con.prepareStatement(sql);
+		    try {
+		        ps.setString(1, assignedId);
+		        ps.setString(2, startDate);
+		        ResultSet rs = ps.executeQuery();
+		        if (rs.next()) {
+		            conflict = true;
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
 	    }
+
 	    return conflict;
 	}
 

@@ -1,6 +1,9 @@
 package view;
 
 import javax.swing.*;
+
+import config.MySqlQuery;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -13,12 +16,17 @@ public class SideMenuPanel extends JPanel {
 	private CardLayout cardLayout;
 	private JPanel contentPanel;
 	private JButton activeButton = null;
-	String username,password;
+	String username,password,employee_id;
+	int role_id;
     private final Map<String, JButton> buttonMap = new HashMap<>();
 
 	public SideMenuPanel(String username,String password,String activeViewName) {
 		this.username = username;
 		this.password = password;
+		String[] querySeeker = MySqlQuery.getLoginUser(this.username, this.password);
+	    this.role_id = Integer.parseInt(querySeeker[1]);
+		this.employee_id = querySeeker[2];
+		    
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBackground(new Color(33, 37, 41));
 		setPreferredSize(new Dimension(200, 600));
@@ -43,14 +51,18 @@ public class SideMenuPanel extends JPanel {
 		addSpacer();
 		addButton("Attachment", "AttachmentView");
 		addSpacer();
-		addButton("Employee", "EmployeeView");
-		addSpacer();
+		if(this.role_id == 1 || this.role_id == 2) {
+			addButton("Employee", "EmployeeView");
+			addSpacer();
+		}
 		addButton("Team", "TeamView");
 		addSpacer();
 		addButton("TeamMember", "TeamMember");
 		addSpacer();
-		addButton("Client", "ClientView");
-		addSpacer();
+		if(this.role_id == 1 || this.role_id == 2) {
+			addButton("Client", "ClientView");
+			addSpacer();
+		}
 		addButton("Notification", "NotificationView");
 		addSpacer();
 //		addButton("Logout", "LoginView");

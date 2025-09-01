@@ -8,5 +8,11 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/User/Downloads/mysql-connector-j-9.2.0/mysql-connector-j-9.2.0/mysql-connector-j-9.2.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/User/Downloads/Compressed/jcalendar-1.4.jar/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="com.miglayout.swing_11.4.2.jar"/>
+	<classpathentry kind="lib" path="com.miglayout.core_11.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail-1.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail-api-1.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/flatlaf-3.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -7,7 +7,9 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import config.Common;
+import config.DBConfig;
+
+//import config.Common;
 
 public class ConfirmPasswordView extends JFrame {
 
@@ -24,6 +26,19 @@ public class ConfirmPasswordView extends JFrame {
 
     // Password regex
     private final String passwordRegex = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[@$!%*#?&]).{7,}$";
+    public static Connection conn = null;
+
+	static {
+		DBConfig cls = new DBConfig();
+		try {
+			conn = cls.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Fail, Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
+		}
+
+	}
 
     public ConfirmPasswordView(String email) {
         this.userEmail = email;
@@ -56,7 +71,7 @@ public class ConfirmPasswordView extends JFrame {
     private void addTitlePanel() {
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-        titlePanel.setBackground(Color.BLACK);
+        titlePanel.setBackground(new Color(255, 164, 92));
 
         JLabel lblTitle = new JLabel("Reset Password");
         lblTitle.setForeground(Color.WHITE);
@@ -112,7 +127,8 @@ public class ConfirmPasswordView extends JFrame {
         gbc.gridy = 3;
         gbc.insets = new Insets(0, 10, 10, 10);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton btnSave = Common.addActionButton("Save");
+//        JButton btnSave = Common.addActionButton("Save");
+        JButton btnSave = new JButton("Save");
         btnSave.setPreferredSize(new Dimension(130, 30));
         btnSave.addActionListener(e -> handleChangePassword());
         buttonPanel.add(btnSave);
@@ -129,7 +145,7 @@ public class ConfirmPasswordView extends JFrame {
 
         stylePasswordField(passwordField);
        // setPlaceholder(passwordField, placeholder);
-        Common.setPlaceholder(passwordField, placeholder);
+//        Common.setPlaceholder(passwordField, placeholder);
         passwordField.setEchoChar('*');
 
         JButton toggleBtn = new JButton(iconHide);
@@ -202,10 +218,11 @@ public class ConfirmPasswordView extends JFrame {
         System.out.println("Attempting to update password for user: " + userEmail);
         System.out.println("New password: " + newPassword);
 
-        String sql = "UPDATE useraccount SET user_password = ? WHERE user_email = ?";
-        try (Connection conn = config.DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-             
+        String sql = "UPDATE employee SET password = ? WHERE email = ?";
+
+        try {
+        	PreparedStatement stmt = (PreparedStatement) conn.prepareStatement(sql);
+//        	PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, newPassword);
             stmt.setString(2, userEmail);
 

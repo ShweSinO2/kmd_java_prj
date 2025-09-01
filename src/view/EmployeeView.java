@@ -174,7 +174,7 @@ public class EmployeeView extends JFrame {
 		lblNewLabel.setBounds(10, 124, 46, 14);
 		formPanel.add(lblNewLabel);
 
-		JLabel lblTeam = new JLabel("Role_id");
+		JLabel lblTeam = new JLabel("Role");
 		lblTeam.setBounds(347, 19, 46, 14);
 		formPanel.add(lblTeam);
 

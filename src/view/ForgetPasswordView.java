@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
+
+import config.DBConfig;
+
 import java.util.Properties;
 import java.util.Random;
 import java.sql.*;
@@ -26,14 +29,23 @@ public class ForgetPasswordView extends JFrame {
     private boolean isOtpValid = false;
 
     private String generatedOtp;
+    public static Connection conn = null;
+    
+	static {
+		DBConfig cls = new DBConfig();
+		try {
+			conn = cls.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Fail, Inter error", "Fail", JOptionPane.ERROR_MESSAGE);
+		}
+
+	}
 
     // mail credentials
-    private final String senderEmail = "hein29939@gmail.com";
-    private final String senderAppPassword = "nkhxdxpxgzsqnzbx";
-
-    private final String dbUrl = "jdbc:mysql://localhost:3306/mdcrrecruitment";
-    private final String dbUsername = "root";
-    private final String dbPassword = ""; 
+    private final String senderEmail = "shwesinmyat7@gmail.com";
+    private final String senderAppPassword = "bghqfrsopdccstct";
 
     public ForgetPasswordView() {
         setTitle("Forgot Password");
@@ -48,7 +60,8 @@ public class ForgetPasswordView extends JFrame {
 
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-        titlePanel.setBackground(Color.BLACK);
+        titlePanel.setBackground(new Color(255, 164, 92));
+       
 
         JLabel lblTitle = new JLabel("Forgot Password");
         lblTitle.setForeground(Color.WHITE);
@@ -78,7 +91,8 @@ public class ForgetPasswordView extends JFrame {
 
         gbc.gridx = 2;
         gbc.gridy = 0;
-        btnGetOtp = Common.addActionButton("Get OTP");
+//        btnGetOtp = Common.addActionButton("Get OTP");
+        btnGetOtp = new JButton("Get OTP");
         btnGetOtp.setPreferredSize(new Dimension(90, 30));
         btnGetOtp.setFont(new Font("Arial", Font.PLAIN, 12));
         fieldPanel.add(btnGetOtp, gbc);
@@ -116,7 +130,8 @@ public class ForgetPasswordView extends JFrame {
         
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton btnSubmit = Common.addActionButton("Submit");
+//        JButton btnSubmit = Common.addActionButton("Submit");
+        JButton btnSubmit = new JButton("Submit");
 
         btnSubmit.setFont(new Font("Arial", Font.PLAIN, 13));
         btnSubmit.setPreferredSize(new Dimension(100, 30));
@@ -209,8 +224,8 @@ public class ForgetPasswordView extends JFrame {
     }
 
     private boolean isEmailRegistered(String email) {
-        try (Connection conn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)) {
-            String sql = "SELECT COUNT(*) FROM useraccount WHERE user_email = ?";
+        try {
+            String sql = "SELECT COUNT(*) FROM employee WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -242,7 +257,7 @@ public class ForgetPasswordView extends JFrame {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(senderEmail, "Group-3"));
+            message.setFrom(new InternetAddress(senderEmail, "[Task Management System]"));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(recipientEmail));
             message.setSubject("Your OTP Code");
@@ -288,7 +303,7 @@ public class ForgetPasswordView extends JFrame {
                     "<div class='otp-code'>" + otp + "</div>" +
                     "<p>Please use this code to complete your action. It is valid for a limited time.</p>" +
                     "<div class='footer'>" +
-                    "<p>Thank you,<br>Myanmar DCR Co., Ltd.</p>" +
+                    "<p>Thank you,<br>Task Management System</p>" +
                     "</div>" +
                     "</div>" +
                     "</body>" +

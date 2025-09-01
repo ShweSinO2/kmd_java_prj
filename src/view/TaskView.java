@@ -356,11 +356,11 @@ public class TaskView extends JFrame {
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
 					} else if (!Checking.validateFutureDate(pm.getStart_date())) {
-						JOptionPane.showMessageDialog(null, "Invalid Start Date", "Invlaid", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Start Date must be in thefuture.", "Invlaid", JOptionPane.ERROR_MESSAGE);
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
 					} else if (!Checking.validateEndDate(pm.getStart_date(), pm.getEnd_date())) {
-						JOptionPane.showMessageDialog(null, "Invalid End Date", "Invlaid",
+						JOptionPane.showMessageDialog(null, "End Date must be in the future.", "Invlaid",
 								JOptionPane.ERROR_MESSAGE);
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
@@ -369,7 +369,7 @@ public class TaskView extends JFrame {
 					else {
 
 						try {
-							if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date())) {
+							if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date(),"save", 0)) {
 							    JOptionPane.showMessageDialog(null, "The assigned employee already has a task starting on this date!", "Date Conflict", JOptionPane.ERROR_MESSAGE);
 							    txtStartDate.requestFocus();
 							    return;
@@ -450,7 +450,6 @@ public class TaskView extends JFrame {
 					String selectedStatus = (String) cboStatus.getSelectedItem();
 					int statusId = StatusMap.get(selectedStatus);
 					pm.setStatus_id(statusId);
-//					pc.updateTask(statusId,Task_id);
 
 					String selectedPriority = (String) cboPriority.getSelectedItem();
 					int priorityId = PriorityMap.get(selectedPriority);
@@ -469,12 +468,26 @@ public class TaskView extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 						txtTaskName.requestFocus(true);
 						txtTaskName.selectAll();
+					} else if (!Checking.validateFutureDate(pm.getStart_date())) {
+						JOptionPane.showMessageDialog(null, "Start Date must be in thefuture.", "Invlaid", JOptionPane.ERROR_MESSAGE);
+						txtTaskName.requestFocus(true);
+						txtTaskName.selectAll();
+					} else if (!Checking.validateEndDate(pm.getStart_date(), pm.getEnd_date())) {
+						JOptionPane.showMessageDialog(null, "End Date must be in the future.", "Invlaid",
+								JOptionPane.ERROR_MESSAGE);
+						txtTaskName.requestFocus(true);
+						txtTaskName.selectAll();
 					} else {
-//						if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date())) {
-//						    JOptionPane.showMessageDialog(null, "The assigned employee already has a task starting on this date!", "Date Conflict", JOptionPane.ERROR_MESSAGE);
-//						    txtStartDate.requestFocus();
-//						    return;
-//						}
+						try {
+							if (pc.isStartDateConflict(pm.getAssigned_id(), pm.getStart_date(), "update", Task_id)) {
+							    JOptionPane.showMessageDialog(null, "The assigned employee already has a task starting on this date!", "Date Conflict", JOptionPane.ERROR_MESSAGE);
+							    txtStartDate.requestFocus();
+							    return;
+							}
+						} catch (HeadlessException | SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 
 						try {
 							int rs = pc.update(pm);
@@ -487,7 +500,7 @@ public class TaskView extends JFrame {
 							}
 
 						} catch (HeadlessException e1) {
-//					// TODO Auto-generated catch block
+							// TODO Auto-generated catch block
 							e1.printStackTrace();
 
 						}
