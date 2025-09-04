@@ -48,7 +48,8 @@ public class MilestoneView extends JFrame {
 	Map<String, Integer> projectMap = new HashMap<>();
 	private JTextField txtShowAll;
 	private JLabel lblSearch;
-	String username,password;
+	String username,password,employee_id;
+	int role_id;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -66,6 +67,9 @@ public class MilestoneView extends JFrame {
 	public MilestoneView(String username,String password) {
 		this.username = username;
 		this.password = password;
+        String[] querySeeker = MySqlQuery.getLoginUser(this.username, this.password);
+        this.role_id = Integer.parseInt(querySeeker[1]);
+	    this.employee_id = querySeeker[2];
 		
 		setTitle("Milestone");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -92,6 +96,11 @@ public class MilestoneView extends JFrame {
 		tblMilestone.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if (role_id == 3 || role_id == 4) {
+		            System.out.println("Role 3 or 4 detected, row click functionality is disabled.");
+		            return; // Exit the method immediately
+		        }
+				
 				int row = tblMilestone.rowAtPoint(e.getPoint());
 				int column = tblMilestone.columnAtPoint(e.getPoint());
 				MilestoneModel pm = new MilestoneModel();
@@ -417,7 +426,16 @@ public class MilestoneView extends JFrame {
 				}
 			}
 		});
-
+		  if (role_id == 3 || role_id == 4) {
+				btnSave.setEnabled(false);
+	            tblMilestone.setEnabled(false);
+	            tblMilestone.setBackground(new Color(240, 240, 240)); 
+	    		tableScrollPane.getViewport().setBackground(new Color(240, 240, 240));
+	        } else {
+				btnSave.setEnabled(true);
+				tblMilestone.setEnabled(true);
+	    		tableScrollPane.getViewport().setBackground(new Color(255, 255, 255));
+	        }
 	}
 
 	public void setColumnWidth(int index, int width) {
@@ -427,6 +445,19 @@ public class MilestoneView extends JFrame {
 	}
 
 	public void createTable() {
+		 // Override the DefaultTableModel to make cells non-editable
+        dtm = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Check if the current user is a programmer (role_id 3 or 4)
+                if (role_id == 3 || role_id == 4) {
+                    return false;
+                } else {
+                    return column != 8;
+                }
+            }
+        };
+        
 		dtm.addColumn("ID");
 		dtm.addColumn("Name");
 		dtm.addColumn("DueDate");
@@ -435,6 +466,12 @@ public class MilestoneView extends JFrame {
 		dtm.addColumn("");
 		tblMilestone.setModel(dtm);
 		tblMilestone.setRowHeight(25);
+		
+		//to add table row grid line
+		tblMilestone.setShowGrid(true);
+		tblMilestone.setGridColor(Color.LIGHT_GRAY);
+		tblMilestone.setIntercellSpacing(new Dimension(1, 1));
+		
 		setColumnWidth(0, 60);
 		setColumnWidth(1, 60);
 		setColumnWidth(2, 150);
@@ -476,8 +513,14 @@ public class MilestoneView extends JFrame {
 				label.setHorizontalAlignment(SwingConstants.CENTER); // Center text
 
 				// Style the label like a button
+				 label.setPreferredSize(new Dimension(30, 15));
+		            if(role_id == 3 || role_id == 4) {
+			            label.setBackground(new Color(240, 240, 240));
+		            } else {
+			            label.setBackground(new Color(255, 255, 255));
+		            }
 				label.setPreferredSize(new Dimension(30, 15));
-				label.setBackground(new Color(255, 255, 255));
+//				label.setBackground(new Color(255, 255, 255));
 				label.setForeground(new Color(40, 167, 69));
 				label.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -511,7 +554,11 @@ public class MilestoneView extends JFrame {
 	}
 
 	public void clear() {
-		btnSave.setEnabled(true);
+		if(role_id == 3 || role_id == 4) {
+			btnSave.setEnabled(false);
+		} else {
+			btnSave.setEnabled(true);
+		}
 		btnUpdate.setEnabled(false);
 		txtMilestoneName.setText("");
 		txtDueDate.setDate(null);

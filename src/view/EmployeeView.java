@@ -56,6 +56,7 @@ public class EmployeeView extends JFrame {
 	private JTextField txtShowAll;
 	private JLabel lblSearch;
 	String username,password;
+    private final String passwordRegex = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[@$!%*#?&]).{7,}$";
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -479,6 +480,12 @@ public class EmployeeView extends JFrame {
 		dtm.addColumn("");
 		tblEmployee.setModel(dtm);
 		tblEmployee.setRowHeight(25);
+		
+		//to add table row grid line
+		tblEmployee.setShowGrid(true);
+		tblEmployee.setGridColor(Color.LIGHT_GRAY);
+		tblEmployee.setIntercellSpacing(new Dimension(1, 1));
+		
 		setColumnWidth(0, 60);
 		setColumnWidth(1, 60);
 		setColumnWidth(2, 150);

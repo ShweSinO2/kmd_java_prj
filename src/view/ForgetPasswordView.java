@@ -169,9 +169,10 @@ public class ForgetPasswordView extends JFrame {
             if (sent) {
             	rfvEmail.setText(" ");
             	rfvOtp.setText(" ");
+            	startOtpTimer(); 
                 JOptionPane.showMessageDialog(this, "OTP sent to " + email, "Success", JOptionPane.INFORMATION_MESSAGE);
                 isOtpValid = true; // âœ… Mark OTP as valid
-                startOtpTimer();   // ðŸ•’ Start cooldown and expiration timer
+//                startOtpTimer();   // ðŸ•’ Start cooldown and expiration timer
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to send OTP.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -257,7 +258,7 @@ public class ForgetPasswordView extends JFrame {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(senderEmail, "[Task Management System]"));
+            message.setFrom(new InternetAddress(senderEmail, "[Project Assign Management System]"));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(recipientEmail));
             message.setSubject("Your OTP Code");
@@ -303,7 +304,7 @@ public class ForgetPasswordView extends JFrame {
                     "<div class='otp-code'>" + otp + "</div>" +
                     "<p>Please use this code to complete your action. It is valid for a limited time.</p>" +
                     "<div class='footer'>" +
-                    "<p>Thank you,<br>Task Management System</p>" +
+                    "<p>Thank you,<br>Project Assign Management System</p>" +
                     "</div>" +
                     "</div>" +
                     "</body>" +

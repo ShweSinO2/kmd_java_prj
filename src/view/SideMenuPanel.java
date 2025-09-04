@@ -34,7 +34,7 @@ public class SideMenuPanel extends JPanel {
 
 		JLabel lblTitle = new JLabel("<html><div style='text-align:center;'>"
 				+ "<span style='font-size:20px; font-weight:bold; " + "color:#FF6F00; text-shadow: 2px 2px #4E342E;'>"
-				+ "Project Task Management<br>System</span></div></html>");
+				+ "Project Assign Management<br>System</span></div></html>");
 
 		lblTitle.setForeground(new Color(255, 255, 255));
 		lblTitle.setAlignmentY(Component.LEFT_ALIGNMENT);
@@ -55,8 +55,10 @@ public class SideMenuPanel extends JPanel {
 			addButton("Employee", "EmployeeView");
 			addSpacer();
 		}
-		addButton("Team", "TeamView");
-		addSpacer();
+		if(this.role_id == 1 || this.role_id == 2) {
+			addButton("Team", "TeamView");
+			addSpacer();
+		}
 		addButton("TeamMember", "TeamMember");
 		addSpacer();
 		if(this.role_id == 1 || this.role_id == 2) {

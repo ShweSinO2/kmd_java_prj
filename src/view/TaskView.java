@@ -634,6 +634,12 @@ public class TaskView extends JFrame {
 		dtm.addColumn("");
 		tblTask.setModel(dtm);
 		tblTask.setRowHeight(25);
+		
+		//to add table row grid line
+		tblTask.setShowGrid(true);
+		tblTask.setGridColor(Color.LIGHT_GRAY);
+		tblTask.setIntercellSpacing(new Dimension(1, 1));
+		
 		setColumnWidth(0, 60);
 		setColumnWidth(1, 150);
 		setColumnWidth(2, 150);

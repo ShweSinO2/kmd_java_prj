@@ -76,12 +76,6 @@ public class ProjectView extends JFrame {
         this.role_id = Integer.parseInt(querySeeker[1]);
 	    this.employee_id = querySeeker[2];
 
-		System.out.println("_____Project______");
-		System.out.println(querySeeker[0]);
-		System.out.println(querySeeker[1]);
-		System.out.println("_____Project______");
-
-
 		setTitle("Project List");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -527,6 +521,11 @@ public class ProjectView extends JFrame {
 	     dtm.addColumn("");
 	     tblProject.setModel(dtm);
 	     tblProject.setRowHeight(25);
+	     
+	     tblProject.setShowGrid(true);
+	     tblProject.setGridColor(Color.LIGHT_GRAY);
+	     tblProject.setIntercellSpacing(new Dimension(1, 1));
+	     
 	     setColumnWidth(0,60);
 	     setColumnWidth(1,60);
 	     setColumnWidth(2,150);

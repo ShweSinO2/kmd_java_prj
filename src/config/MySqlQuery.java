@@ -199,6 +199,46 @@ public class MySqlQuery {
 		}
 		return employee;
 	}
+	
+	public static String[] getTeamByEmployeeId(String employee_id) {
+		String sql = "select * from team_member WHERE employee_id = ?";
+		String team[] = new String[3];		
+		try {
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, employee_id);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				team[0] = Integer.toString(rs.getInt("team_id")); //team_id
+				team[1] = rs.getString("employee_id");//employee_id
+				team[2] = rs.getString("position");//position
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return team;
+	}
+	
+	public static String[] getTeamMemberByTeamId(int team_id) {
+		String sql = "select * from team_member WHERE team_id = ?";
+		String team[] = new String[3];		
+		try {
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, team_id);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				team[0] = Integer.toString(rs.getInt("team_id")); //team_id
+				team[1] = rs.getString("employee_id");//employee_id
+				team[2] = rs.getString("position");//position
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return team;
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

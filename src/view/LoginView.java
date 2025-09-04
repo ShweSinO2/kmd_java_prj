@@ -25,6 +25,7 @@ import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 import java.awt.event.ActionEvent;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -57,6 +58,7 @@ public class LoginView extends JFrame {
 	private JPasswordField txtPassword;
 	private JLabel lblUsernameError; // User name
 	private JLabel lblPasswordError; // Password error
+    private final String passwordRegex = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[@$!%*#?&]).{7,}$";
 
 	public LoginView() {
 
@@ -65,7 +67,7 @@ public class LoginView extends JFrame {
 		} catch (Exception ex) {
 			System.err.println("Failed to initialize FlatLaf");
 		}
-		setTitle("Project Management System");
+//		setTitle("Project Management System");
 		getContentPane().setLayout(null);
 
 		BackgroundPanel outerPanel = new BackgroundPanel("src/images/bg.png"); // Use full path or place in resources
@@ -108,10 +110,6 @@ public class LoginView extends JFrame {
 		txtUsername = new PlaceholderTextField("Username");
 		txtUsername.setBounds(30, 105, innerPanelWidth - 60, 35);
 		txtUsername.setFont(new Font("SansSerif", Font.PLAIN, 14));
-//		txtUsername.setBorder(BorderFactory.createCompoundBorder(
-//		    new LineBorder(new Color(200, 150, 100), 1, true),
-//		    BorderFactory.createEmptyBorder(5, 10, 5, 10)
-//		));
 		txtUsername.setColumns(10);
 		innerPanel.add(txtUsername);
 
@@ -120,49 +118,18 @@ public class LoginView extends JFrame {
 		innerPanel.add(lblNewLabel_1_1);
 
 		// lblPasswordError
-		lblPasswordError = new JLabel("Password is required.");
+		lblPasswordError = new JLabel("");
 		lblPasswordError.setForeground(new Color(255, 0, 0));
-		 lblPasswordError.setBounds(30, 227, 242, 14);
+		lblPasswordError.setBounds(30, 227, 242, 28);
 		innerPanel.add(lblPasswordError);
 		lblPasswordError.setVisible(false);
 
-//		txtPassword = new JPasswordField();
 		txtPassword = new PlaceholderPasswordField("Password");
 		txtPassword.setBounds(30, 190, innerPanelWidth - 75, 35);
 		txtPassword.setFont(new Font("SansSerif", Font.PLAIN, 14));
-//		txtPassword.setBorder(BorderFactory.createCompoundBorder(
-//		    new LineBorder(new Color(200, 150, 100), 1, true),
-//		    BorderFactory.createEmptyBorder(5, 10, 5, 10)
-//		));
 		innerPanel.add(txtPassword);
 		txtPassword.setColumns(10);
 		innerPanel.add(txtPassword);
-
-		// Eye toggle button
-//		JButton toggleBtn = new JButton("\uD83D\uDC41");
-//		toggleBtn.setBackground(new Color(64, 0, 64));
-//		toggleBtn.setBounds(240, 164, 28, 28);
-//		toggleBtn.setFocusable(false);
-//		toggleBtn.setBorderPainted(false);
-//		toggleBtn.setContentAreaFilled(false);
-//		toggleBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-//
-//		innerPanel.add(toggleBtn);
-//
-//		// Toggle show/hide password
-//		toggleBtn.addActionListener(new ActionListener() {
-//			private boolean showing = false;
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				if (showing) {
-//					txtPassword.setEchoChar('•'); // hide
-//				} else {
-//					txtPassword.setEchoChar((char) 0); // show
-//				}
-//				showing = !showing;
-//			}
-//		});
 		
 		// Eye toggle button with ImageIcon
 		ImageIcon eyeIcon = new ImageIcon(new ImageIcon("src/images/view.png").getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH));
@@ -197,7 +164,7 @@ public class LoginView extends JFrame {
 		lblForgotPassword.setForeground(new Color(153, 76, 0));
 		lblForgotPassword.setFont(new Font("SansSerif", Font.BOLD, 12));
 		lblForgotPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		lblForgotPassword.setBounds(innerPanelWidth - 160, 240, 160, 14);
+		lblForgotPassword.setBounds(innerPanelWidth - 150, 260, 160, 14);
 		innerPanel.add(lblForgotPassword);
 
 		// Make the label clickable
@@ -211,12 +178,9 @@ public class LoginView extends JFrame {
 
 		JButton btnLogin = new JButton("Login");
 
-//		btnLogin.setUI(new BasicButtonUI());
 		btnLogin.setBackground(new Color(153, 76, 0));
-//		btnLogin.setBackground(UIManager.getColor("Button.default.background"));
 		btnLogin.setForeground(Color.WHITE);
 		btnLogin.setFont(new Font("SansSerif", Font.BOLD, 16));
-//		btnLogin.setBorder(new LineBorder(new Color(102, 51, 0), 1, true));
 		btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnLogin.setFocusPainted(false);
 		btnLogin.setContentAreaFilled(true);
@@ -252,6 +216,7 @@ public class LoginView extends JFrame {
 
 				// Password blank
 				if (txtPassword.getText().trim().isEmpty()) {
+					lblPasswordError.setText("Password is required.");
 					lblPasswordError.setVisible(true);
 					if (!hasError) { // Username blank
 						txtPassword.requestFocus(true);
@@ -259,6 +224,16 @@ public class LoginView extends JFrame {
 					}
 					hasError = true;
 				}
+				
+		        if (!txtPassword.getText().trim().isEmpty() && !Pattern.matches(passwordRegex, txtPassword.getText().trim())) {
+		        	lblPasswordError.setText("<html>Password must be at least 7 length<br>& numbers & a special character.</html>");
+		        	lblPasswordError.setVisible(true);
+					if (!hasError) { // Username blank
+						txtPassword.requestFocus(true);
+						txtPassword.selectAll();
+					}
+					hasError = true;
+		        }
 
 				//no error
 				if (!hasError) {
@@ -293,7 +268,7 @@ public class LoginView extends JFrame {
 				}
 			}
 		});
-		btnLogin.setBounds(30, 280, innerPanelWidth - 60, 40);
+		btnLogin.setBounds(30, 290, innerPanelWidth - 60, 40);
 		innerPanel.add(btnLogin);
 	}
 	

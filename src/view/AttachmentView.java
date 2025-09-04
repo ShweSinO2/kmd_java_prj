@@ -277,6 +277,12 @@ public class AttachmentView extends JFrame {
 		dtm.addColumn("");
 		tblAttachment.setModel(dtm);
 		tblAttachment.setRowHeight(25);
+		
+		//to add table row grid line
+		tblAttachment.setShowGrid(true);
+		tblAttachment.setGridColor(Color.LIGHT_GRAY);
+		tblAttachment.setIntercellSpacing(new Dimension(1, 1));
+				
 		setColumnWidth(0, 20);
 		setColumnWidth(1, 200);
 		setColumnWidth(2, 150);

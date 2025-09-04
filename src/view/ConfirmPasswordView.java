@@ -61,8 +61,8 @@ public class ConfirmPasswordView extends JFrame {
     }
 
     private void loadIcons() {
-        iconShow = new ImageIcon("../ojt_mdcr_recruitment_system/src/image/view.png");
-        iconHide = new ImageIcon("../ojt_mdcr_recruitment_system/src/image/hide.png");
+        iconShow = new ImageIcon("src/images/view.png");
+        iconHide = new ImageIcon("src/images/hide.png");
 
         iconShow = new ImageIcon(iconShow.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
         iconHide = new ImageIcon(iconHide.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));

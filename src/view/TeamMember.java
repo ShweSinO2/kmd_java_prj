@@ -50,7 +50,8 @@ public class TeamMember extends JFrame {
 	private JComboBox cboTeamSearch;
 	Map<String, Integer> teamMap = new HashMap<>();
 	Map<String, String> employeeMap = new HashMap<>();
-	String username,password;
+	String username,password,employee_id;
+	int role_id, team_id;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -68,6 +69,12 @@ public class TeamMember extends JFrame {
 	public TeamMember(String username,String password) {
 		this.username = username;
 		this.password = password;
+		String[] querySeeker = MySqlQuery.getLoginUser(this.username, this.password);
+        this.role_id = Integer.parseInt(querySeeker[1]);
+	    this.employee_id = querySeeker[2];
+	    
+	    String[] teamData = MySqlQuery.getTeamByEmployeeId(this.employee_id);
+	    this.team_id = Integer.parseInt(teamData[0]);
 		
 		setTitle("Team Member");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -170,7 +177,11 @@ public class TeamMember extends JFrame {
 							if(rs==1) {
 								
 								JOptionPane.showMessageDialog(null,"Delete Successfully","Successfully", JOptionPane.INFORMATION_MESSAGE);
-								showList();
+								if(role_id == 1 || role_id == 2) {
+									showList();
+								} else {
+									showListByTeamId(team_id);
+								}
 								clear();
 								
 							}else {
@@ -220,8 +231,11 @@ public class TeamMember extends JFrame {
 					if (rs == 1) {
 						JOptionPane.showMessageDialog(null, "Save Successfully", "Successfully",
 								JOptionPane.INFORMATION_MESSAGE);
-//						AutoID();
-						showList();
+						if(role_id == 1 || role_id == 2) {
+							showList();
+						} else {
+							showListByTeamId(team_id);
+						}
 						clear();
 					}
 				} catch (HeadlessException e1) {
@@ -260,7 +274,11 @@ public class TeamMember extends JFrame {
 					if (rs == 1) {
 						JOptionPane.showMessageDialog(null, "Update Successfully", "Successfully",
 								JOptionPane.INFORMATION_MESSAGE);
-						showList();
+						if(role_id == 1 || role_id == 2) {
+							showList();
+						} else {
+							showListByTeamId(team_id);
+						}
 						clear();
 					}
 				} catch (HeadlessException e1) {
@@ -310,7 +328,11 @@ public class TeamMember extends JFrame {
 		});
 		
 		createTable();
-		showList();
+		if(role_id == 1 || role_id == 2) {
+			showList();
+		} else {
+			showListByTeamId(team_id);
+		}
 		
 		btnUpdate.setEnabled(false);
 		
@@ -320,7 +342,11 @@ public class TeamMember extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					if (cboTeamSearch.getSelectedIndex() == 0) {
-						showList();
+						if(role_id == 1 || role_id == 2) {
+							showList();
+						} else {
+							showListByTeamId(team_id);
+						}
 					} else {
 						showListOne();
 					}
@@ -353,6 +379,12 @@ public class TeamMember extends JFrame {
 		dtm.addColumn("");
 		tblTeamMember.setModel(dtm);
 		tblTeamMember.setRowHeight(25);
+		
+		//to add table row grid line
+		tblTeamMember.setShowGrid(true);
+		tblTeamMember.setGridColor(Color.LIGHT_GRAY);
+		tblTeamMember.setIntercellSpacing(new Dimension(1, 1));
+		
 		setColumnWidth(0, 20);
 		setColumnWidth(1, 200);
 		setColumnWidth(2, 150);
@@ -442,12 +474,28 @@ public class TeamMember extends JFrame {
 				data[1] = getNameById(teamMap, tmm.getTeam_id());
 				data[2] = tmm.getPosition();
 				data[3] = "Delete";
-				
-//				if ("Project".equals(am.getRelated_type())) {
-//					data[2] = getNameById(projectMap, am.getRelated_id());
-//			    } else if ("Task".equals(am.getRelated_type())) {
-//			        data[2] = getNameById(taskMap, am.getRelated_id());
-//			    }
+
+				dtm.addRow(data);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void showListByTeamId(int team_id) {
+		String data[] = new String[9];
+		String relatedName = null;
+        
+		TeamMemberController tmc = new TeamMemberController();
+		try {
+			List<TeamMemberModel> list = tmc.selectbyTeamId(team_id);
+			dtm.setRowCount(0);
+			for (TeamMemberModel tmm : list) {	
+				data[0] = getNameByEmployeeId(employeeMap, tmm.getEmployee_id());
+				data[1] = getNameById(teamMap, tmm.getTeam_id());
+				data[2] = tmm.getPosition();
+				data[3] = "Delete";
 
 				dtm.addRow(data);
 			}
